@@ -4,24 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>{{ $title ?? config('app.name') }}</title>
+    <title>@yield('title', config('app.name')) · Card</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     @vite(['resources/css/app.css', 'resources/js/app.js'])
-    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js" defer></script>
-    <script>document.addEventListener('DOMContentLoaded', () => { if (window.lucide) lucide.createIcons(); });</script>
+    @livewireStyles
 </head>
-<body class="min-h-screen flex flex-col items-center justify-center antialiased"
-      style="background-color: var(--color-primary, #003049); font-family: 'Inter', sans-serif;">
+<body class="min-h-screen flex items-center justify-center px-4 py-8 antialiased"
+      style="background-color: #F0F0EE; font-family: 'Inter', sans-serif;">
 
-    <div class="w-full max-w-md px-4">
-        <div class="text-center mb-8">
-            <a href="/" wire:navigate class="text-white text-3xl font-semibold tracking-tight">Card</a>
-            <p class="text-white/60 text-sm mt-1">Seu cartão digital profissional</p>
-        </div>
-
-        <div class="bg-white rounded-2xl shadow-xl p-8">
-            {{ $slot }}
-        </div>
+    <div class="w-full max-w-[400px] bg-white rounded-[14px] shadow-[0_4px_24px_rgba(0,0,0,.10)] p-8">
+        {{ $slot }}
     </div>
 
+    <script>lucide.createIcons();</script>
+    @livewireScripts
 </body>
 </html>

@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\CardController;
+use App\Http\Controllers\Dashboard\SettingsController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -16,7 +18,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::view('schedule', 'dashboard.schedule')->name('schedule');
         Route::view('appointments', 'dashboard.appointments')->name('appointments');
         Route::view('plan', 'dashboard.plan')->name('plan');
-        Route::view('settings', 'dashboard.settings')->name('settings');
+        Route::get('settings', [SettingsController::class, 'index'])->name('settings');
+        Route::delete('settings/account', [SettingsController::class, 'destroyAccount'])->name('settings.account.destroy');
     });
 });
 
@@ -33,6 +36,6 @@ Route::post('logout', function () {
 })->middleware('auth')->name('logout');
 
 // Cartão público
-Route::get('/u/{slug}', [\App\Http\Controllers\CardController::class, 'show'])->name('card.show');
+Route::get('/u/{slug}', [CardController::class, 'show'])->name('card.show');
 
 require __DIR__.'/auth.php';

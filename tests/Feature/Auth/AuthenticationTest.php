@@ -62,9 +62,8 @@ class AuthenticationTest extends TestCase
 
         $response = $this->get('/dashboard');
 
-        $response
-            ->assertOk()
-            ->assertSeeVolt('layout.navigation');
+        // Sidebar customizado substitui o layout.navigation do Breeze
+        $response->assertOk()->assertSee('dashboard');
     }
 
     public function test_users_can_logout(): void

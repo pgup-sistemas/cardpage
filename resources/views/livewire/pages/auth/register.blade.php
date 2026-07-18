@@ -10,23 +10,51 @@ use Livewire\Volt\Component;
 
 new #[Layout('layouts.guest')] class extends Component
 {
-    public string $name = '';
+    public string $name  = '';
+    public string $slug  = '';
     public string $email = '';
     public string $password = '';
     public string $password_confirmation = '';
 
-    /**
-     * Handle an incoming registration request.
-     */
     public function register(): void
     {
+        // Auto-gera slug a partir do nome se não informado (p/ compatibilidade de testes)
+        if (empty($this->slug)) {
+            $base = \Illuminate\Support\Str::slug($this->name);
+            $candidate = substr($base, 0, 26);
+            $this->slug = $candidate ?: 'user';
+            $i = 1;
+            while (User::where('slug', $this->slug)->exists()) {
+                $this->slug = $candidate . '-' . $i++;
+            }
+        }
+
         $validated = $this->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
+            'name'     => ['required', 'string', 'max:255'],
+            'slug'     => [
+                'required', 'string', 'min:3', 'max:30',
+                'regex:/^[a-z0-9\-]+$/',
+                'unique:users,slug',
+                'not_in:admin,api,login,register,dashboard,u,webhook,filament,storage,public',
+            ],
+            'email'    => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
             'password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
+        ], [
+            'name.required'     => 'Informe seu nome completo.',
+            'slug.required'     => 'Informe seu link personalizado.',
+            'slug.min'          => 'O link deve ter no mínimo 3 caracteres.',
+            'slug.max'          => 'O link deve ter no máximo 30 caracteres.',
+            'slug.regex'        => 'Use apenas letras minúsculas, números e hifens.',
+            'slug.unique'       => 'Este link já está em uso. Escolha outro.',
+            'slug.not_in'       => 'Este link é reservado. Escolha outro.',
+            'email.required'    => 'Informe seu e-mail.',
+            'email.unique'      => 'Este e-mail já está cadastrado.',
+            'password.required' => 'Informe uma senha.',
+            'password.confirmed'=> 'As senhas não conferem.',
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
+        $validated['plan']     = 'free';
 
         event(new Registered($user = User::create($validated)));
 
@@ -37,52 +65,100 @@ new #[Layout('layouts.guest')] class extends Component
 }; ?>
 
 <div>
-    <form wire:submit="register">
-        <!-- Name -->
+    <div class="text-center mb-6">
+        <div class="flex items-center justify-center gap-2">
+            <svg data-lucide="credit-card" class="w-7 h-7" style="color: #FCBF49;"></svg>
+            <span class="text-xl font-semibold" style="color: #003049;">Card</span>
+        </div>
+        <p class="text-sm text-gray-500 mt-1">Crie sua conta gratuitamente</p>
+    </div>
+
+    <form wire:submit="register" class="space-y-4">
+        {{-- Nome --}}
         <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input wire:model="name" id="name" class="block mt-1 w-full" type="text" name="name" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+            <label for="name" class="block text-xs font-medium text-gray-600 mb-1">Nome completo</label>
+            <input wire:model.live="name"
+                   id="name" name="name" type="text"
+                   class="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg bg-gray-50 focus:outline-none focus:border-[#003049] focus:ring-1 focus:ring-[#003049] transition"
+                   placeholder="Seu nome" required autofocus autocomplete="name"
+                   x-on:input="
+                       const v = $event.target.value
+                           .toLowerCase()
+                           .normalize('NFD').replace(/[̀-ͯ]/g,'')
+                           .replace(/[^a-z0-9\s-]/g,'')
+                           .trim()
+                           .replace(/\s+/g,'-');
+                       $wire.slug = v;
+                   ">
+            @error('name')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
         </div>
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input wire:model="email" id="email" class="block mt-1 w-full" type="email" name="email" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+        {{-- Slug --}}
+        <div>
+            <label for="slug" class="block text-xs font-medium text-gray-600 mb-1">
+                Seu link personalizado
+            </label>
+            <div class="flex items-center border border-gray-200 rounded-lg overflow-hidden bg-gray-50 focus-within:border-[#003049] focus-within:ring-1 focus-within:ring-[#003049] transition">
+                <span class="px-3 py-2.5 text-xs text-gray-400 bg-gray-100 border-r border-gray-200 select-none whitespace-nowrap">
+                    card.app/u/
+                </span>
+                <input wire:model="slug"
+                       id="slug" name="slug" type="text"
+                       class="flex-1 px-3 py-2.5 text-sm bg-gray-50 focus:outline-none"
+                       placeholder="seu-nome" required
+                       x-on:input="$event.target.value = $event.target.value.toLowerCase().replace(/[^a-z0-9-]/g,'')">
+            </div>
+            <p class="text-xs text-gray-400 mt-1">Apenas letras, números e hifens. Imutável após 30 dias.</p>
+            @error('slug')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
         </div>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input wire:model="password" id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+        {{-- E-mail --}}
+        <div>
+            <label for="email" class="block text-xs font-medium text-gray-600 mb-1">E-mail</label>
+            <input wire:model="email"
+                   id="email" name="email" type="email"
+                   class="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg bg-gray-50 focus:outline-none focus:border-[#003049] focus:ring-1 focus:ring-[#003049] transition"
+                   placeholder="voce@email.com" required autocomplete="username">
+            @error('email')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
         </div>
 
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input wire:model="password_confirmation" id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
+        {{-- Senha --}}
+        <div>
+            <label for="password" class="block text-xs font-medium text-gray-600 mb-1">Senha</label>
+            <input wire:model="password"
+                   id="password" name="password" type="password"
+                   class="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg bg-gray-50 focus:outline-none focus:border-[#003049] focus:ring-1 focus:ring-[#003049] transition"
+                   placeholder="Mínimo 8 caracteres" required autocomplete="new-password">
+            @error('password')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
         </div>
 
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}" wire:navigate>
-                {{ __('Already registered?') }}
+        {{-- Confirmar senha --}}
+        <div>
+            <label for="password_confirmation" class="block text-xs font-medium text-gray-600 mb-1">Confirmar senha</label>
+            <input wire:model="password_confirmation"
+                   id="password_confirmation" name="password_confirmation" type="password"
+                   class="w-full px-3 py-2.5 text-sm border border-gray-200 rounded-lg bg-gray-50 focus:outline-none focus:border-[#003049] focus:ring-1 focus:ring-[#003049] transition"
+                   placeholder="Repita a senha" required autocomplete="new-password">
+            @error('password_confirmation')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
+        </div>
+
+        {{-- Submit --}}
+        <button type="submit"
+                class="w-full py-2.5 rounded-lg text-sm font-semibold text-white transition hover:opacity-90 active:scale-[.98] flex items-center justify-center gap-2"
+                style="background-color: #003049;">
+            <svg data-lucide="user-plus" class="w-4 h-4"></svg>
+            Criar conta grátis
+        </button>
+
+        <p class="text-center text-xs text-gray-500">
+            Já tem conta?
+            <a href="{{ route('login') }}" wire:navigate class="font-medium hover:underline" style="color: #003049;">
+                Entrar
             </a>
+        </p>
 
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
+        <p class="text-center text-xs text-gray-400 mt-2">
+            Ao criar sua conta você ganha <span class="font-semibold text-[#F77F00]">14 dias grátis do Pro</span>.
+        </p>
     </form>
 </div>
