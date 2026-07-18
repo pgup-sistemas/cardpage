@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Card extends Model
 {
@@ -45,6 +46,11 @@ class Card extends Model
     public function messages(): HasMany
     {
         return $this->hasMany(ContactMessage::class)->orderByDesc('created_at');
+    }
+
+    public function schedule(): HasOne
+    {
+        return $this->hasOne(CardSchedule::class);
     }
 
     public function getPrimaryColorAttribute(): string

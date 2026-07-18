@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agendamento recusado · Card</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+body { font-family: Inter, sans-serif; background: #F0F0EE; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 20px; }
+.card { background: white; border-radius: 16px; padding: 40px 32px; max-width: 480px; width: 100%; text-align: center; }
+.icon { width: 56px; height: 56px; border-radius: 50%; background: #fdecea; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px; font-size: 24px; }
+h1 { font-size: 20px; font-weight: 600; color: #1a1a1a; margin: 0 0 8px; }
+p { font-size: 14px; color: #666; line-height: 1.5; margin: 0 0 16px; }
+.btn { display: inline-block; margin-top: 16px; padding: 12px 24px; border-radius: 10px; background: #003049; color: white; text-decoration: none; font-size: 14px; font-weight: 500; }
+</style>
+</head>
+<body>
+<div class="card">
+    <div class="icon">✗</div>
+    <h1>Agendamento recusado</h1>
+    <p>O visitante <strong>{{ $appointment->visitor_name }}</strong> foi notificado por e-mail.</p>
+    <a href="/dashboard/appointments" class="btn">Ver agendamentos</a>
+</div>
+</body>
+</html>
