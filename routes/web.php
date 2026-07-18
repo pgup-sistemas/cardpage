@@ -18,6 +18,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::view('schedule', 'dashboard.schedule')->name('schedule');
         Route::view('appointments', 'dashboard.appointments')->name('appointments');
         Route::view('plan', 'dashboard.plan')->name('plan');
+        Route::get('share', [App\Http\Controllers\Dashboard\ShareController::class, 'index'])->name('share');
         Route::get('settings', [SettingsController::class, 'index'])->name('settings');
         Route::delete('settings/account', [SettingsController::class, 'destroyAccount'])->name('settings.account.destroy');
     });
@@ -38,5 +39,7 @@ Route::post('logout', function () {
 // Cartão público
 Route::get('/u/{slug}', [CardController::class, 'show'])->name('card.show');
 Route::get('/u/{slug}/contato.vcf', [CardController::class, 'vcard'])->name('card.vcard');
+Route::get('/u/{slug}/qr.svg', [CardController::class, 'qrSvg'])->name('card.qr.svg');
+Route::get('/u/{slug}/qr.png', [CardController::class, 'qrPng'])->name('card.qr.png');
 
 require __DIR__.'/auth.php';

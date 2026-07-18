@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Card;
+use App\Services\QrCodeService;
 use App\Services\VCardService;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -35,6 +36,22 @@ class CardController extends Controller
 
         return response($vcf, 200, [
             'Content-Type'        => 'text/vcard; charset=utf-8',
+            'Content-Disposition' => 'attachment; filename="' . $filename . '"',
+        ]);
+    }
+
+    public function qrSvg(string $slug, QrCodeService $qr): Response
+    {
+        $card = Card::where('slug', $slug)->where('is_active', true)->firstOrFail();
+        return response($qr->generateSvg($card), 200, ['Content-Type' => 'image/svg+xml']);
+    }
+
+    public function qrPng(string $slug, QrCodeService $qr): Response
+    {
+        $card = Card::where('slug', $slug)->where('is_active', true)->firstOrFail();
+        $filename = $slug . '-qrcode.png';
+        return response($qr->generatePng($card), 200, [
+            'Content-Type'        => 'image/png',
             'Content-Disposition' => 'attachment; filename="' . $filename . '"',
         ]);
     }
