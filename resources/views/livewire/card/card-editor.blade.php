@@ -65,8 +65,9 @@
                              class="w-full aspect-square object-cover object-top rounded-xl border border-gray-200">
                         <button wire:click="removeProfilePhoto"
                                 wire:confirm="Remover foto de perfil?"
-                                class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-white shadow flex items-center justify-center hover:bg-red-50 transition">
-                            <i data-lucide="x" class="w-3 h-3 text-red-500"></i>
+                                class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-red-500 shadow-md flex items-center justify-center hover:bg-red-600 transition z-10 text-white"
+                                title="Remover foto">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                         </button>
                     @else
                         <div class="w-full aspect-square rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 flex flex-col items-center justify-center gap-1">
@@ -95,8 +96,9 @@
                              class="w-full object-cover object-center rounded-xl border border-gray-200">
                         <button wire:click="removeCoverPhoto"
                                 wire:confirm="Remover foto de capa?"
-                                class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-white shadow flex items-center justify-center hover:bg-red-50 transition">
-                            <i data-lucide="x" class="w-3 h-3 text-red-500"></i>
+                                class="absolute top-1.5 right-1.5 w-6 h-6 rounded-full bg-red-500 shadow-md flex items-center justify-center hover:bg-red-600 transition z-10 text-white"
+                                title="Remover capa">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                         </button>
                     @else
                         <div style="aspect-ratio:3/1" class="w-full rounded-xl border-2 border-dashed border-gray-200 bg-gray-50 flex flex-col items-center justify-center gap-1">

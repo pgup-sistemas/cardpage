@@ -1,6 +1,6 @@
-# Card — Constitution v1.1
+# Card — Constitution v1.2
 > Cartão Digital SaaS · PageUp Sistemas · Porto Velho, RO
-> Data: 2026-07-09 · Atualizado: 2026-07-09 · Status: DOCUMENTO CANÔNICO
+> Data: 2026-07-09 · Atualizado: 2026-07-20 · Status: DOCUMENTO CANÔNICO
 
 ---
 
@@ -65,6 +65,36 @@ Estas decisões não devem ser revertidas sem revisão formal do documento.
 - Slot fica bloqueado ao confirmar — não pode ser solicitado por outro visitante
 - Visitante recebe e-mail de confirmação ou mensagem de recusa/reagendamento
 - Confirmação automática + integração Google Calendar → v1.1
+
+### 2.11 Analytics de cartão
+
+- Toda visita a `/u/{slug}` registra uma linha em `card_views` com `ip_hash`, `user_agent`, `referer` e `source`
+- `source` é derivado do HTTP Referer via `CardController::detectSource()`: direto / whatsapp / instagram / google / facebook / linkedin / tiktok / twitter / telegram / outros
+- Clicks em links são rastreados via rota intermediária `/u/{slug}/link/{id}` que incrementa `card_links.click_count` antes de redirecionar — sem impacto perceptível na UX
+- Dashboard exibe: gráfico diário 30 dias, painel de origens com percentual e cor de plataforma, ranking de links por clicks
+- Não há rastreamento por cookie ou fingerprint — apenas IP hash e user agent para deduplicação básica
+
+### 2.12 Galeria e lightbox
+
+- Fotos da galeria exibidas em grid 3 colunas no cartão público
+- Clique em qualquer foto abre lightbox fullscreen com overlay escuro
+- Navegação: setas prev/next, dots indicadores de posição, swipe touch (detecção por `touchstart`/`touchend`), teclado (← → Esc)
+- Dados das fotos passados ao JS via variável `const photos` renderizada pelo Blade antes do `</body>`
+- Botão de excluir sempre visível como X vermelho no canto superior direito de cada foto (sem depender de hover — compatível com touch)
+
+### 2.13 Padronização de imagens no upload
+
+- **Foto de perfil:** orientação EXIF corrigida → crop quadrado a partir do topo → resize 400×400px → JPEG 85%
+- **Foto de capa:** orientação EXIF corrigida → crop proporcional 3:1 centralizado → resize 1200×400px → JPEG 85%
+- **Foto de galeria:** orientação EXIF corrigida → escala proporcional max 1200px de largura → JPEG 85%
+- Todas as operações feitas no servidor via `Intervention\Image\ImageManager` com driver GD
+- Ícones SVG inline nos botões de exclusão (não dependem de `lucide.createIcons()` após updates do Livewire)
+
+### 2.14 Logo e identidade da plataforma no cartão
+
+- Rodapé de todo cartão público exibe o logo NEXOSN (SVG 4 círculos + texto "NEX·OSN") com link para `https://nexosn.pageup.net.br`
+- Usuários Free exibem adicionalmente o texto "Criado com NEXOSN" acima do logo
+- Logo renderizado inline como SVG — sem dependência externa, sem carregamento assíncrono
 
 ### 2.10 Cores de marca pelo usuário
 - **2 pickers independentes:** cor primária (header, fundo) + cor de botão (CTAs)
@@ -203,7 +233,8 @@ cards
 
 card_links
   id, card_id (FK), type (enum: social|custom|pix|schedule),
-  label, url, icon, is_active (bool), sort_order (int)
+  label, url, icon, is_active (bool), sort_order (int),
+  click_count (bigint unsigned, default 0)
 
 card_photos
   id, card_id (FK), path, thumbnail_path, alt, sort_order, created_at
@@ -213,7 +244,7 @@ contact_messages
   message, read_at (nullable), created_at
 
 card_views
-  id, card_id (FK), ip_hash, user_agent, viewed_at
+  id, card_id (FK), ip_hash, user_agent, referer, source (varchar 40, default 'direct'), viewed_at
 
 -- NOVO: Módulo Agenda --
 
@@ -283,7 +314,7 @@ card_appointments
 | Cores de marca (2 pickers) | Não — cores fixas Card | Sim |
 | Agenda de agendamentos | Não | Sim |
 | Histórico de mensagens | Não | Sim |
-| Analytics detalhado | Não | v1.1 |
+| Analytics (gráfico 30 dias, origens, clicks por link) | Sim | Sim |
 | Marca d'água | Obrigatória | Removida |
 | PIX no cartão | Sim | Sim |
 | vCard / QR Code | Sim | Sim |
@@ -322,6 +353,7 @@ card_appointments
 |---|---|---|
 | v1.0 | 2026-07-09 | Documento inicial |
 | v1.1 | 2026-07-09 | + Header com foto de capa (seção 2.8) · + Módulo Agenda com confirmação manual (seção 2.9) · + Cores de marca 2 pickers Pro (seção 2.10) · + Tabelas `card_schedules`, `card_schedule_slots`, `card_appointments` · + campos `brand_color_primary`, `brand_color_button` em `cards` · + Rotas de agenda e agendamento · + Limites de plano atualizados |
+| v1.2 | 2026-07-20 | + Seção 2.11 Analytics (source em card_views, click_count em card_links, dashboard 30 dias) · + Seção 2.12 Galeria lightbox (swipe, teclado, dots) · + Seção 2.13 Padronização de imagens no servidor (EXIF, crop, resize por tipo) · + Seção 2.14 Logo NEXOSN no rodapé · + Analytics movido de v1.1 para Free/Pro no MVP · + Modelo de dados atualizado (source, click_count, referer) |
 
 ---
 

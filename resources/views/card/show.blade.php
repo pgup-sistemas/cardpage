@@ -98,93 +98,198 @@
         color: #431900; font-weight: 700; letter-spacing: .1px;
     }
 
-    /* ── Social pills ── */
-    .spill {
-        display: inline-flex; align-items: center; justify-content: center;
-        width: 38px; height: 38px; border-radius: 12px;
-        transition: opacity .12s, transform .1s;
-        background-color: var(--card-primary);
+    /* ── Social scroll (novo) ── */
+    .social-track {
+        display: flex;
+        gap: 7px;
+        overflow-x: auto;
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 2px;
+        cursor: grab;
+        user-select: none;
         -webkit-tap-highlight-color: transparent;
     }
-    .spill:active { transform: scale(.88); opacity: .8; }
+    .social-track:active { cursor: grabbing; }
+    .social-track::-webkit-scrollbar { display: none; }
+
+    .spill {
+        flex-shrink: 0;
+        display: inline-flex; align-items: center; gap: 6px;
+        padding: 7px 12px 7px 10px;
+        border-radius: 12px;
+        text-decoration: none;
+        transition: opacity .12s, transform .1s;
+        white-space: nowrap;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .spill:active { transform: scale(.92); opacity: .8; }
+    .spill-label { font-size: 12px; font-weight: 600; color: rgba(255,255,255,.92); }
+
+    /* cores por plataforma */
+    .spill-ig { background: #833AB4; }
+    .spill-wa { background: #1a9e47; }
+    .spill-li { background: #0A66C2; }
+    .spill-yt { background: #c62828; }
+    .spill-tk { background: #111111; }
+    .spill-tw { background: #1a1a1a; }
+    .spill-fb { background: #1877F2; }
+    .spill-tg { background: #2AABEE; }
+    .spill-pi { background: #E60023; }
+    .spill-sp { background: #1DB954; }
+    .spill-def { background-color: var(--card-primary); }
+
+    /* dots de scroll */
+    .scroll-dots { display: flex; justify-content: center; gap: 4px; padding: 8px 0 2px; }
+    .sd { width: 4px; height: 4px; border-radius: 50%; background: #d1d5db; transition: all .22s; }
+    .sd.on { width: 14px; border-radius: 3px; background: var(--card-primary); }
+
+    /* botões de ação rápida no header */
+    .hdr-btn {
+        width: 32px; height: 32px; border-radius: 50%;
+        background: rgba(255,255,255,.15); border: none;
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer; transition: background .12s;
+        -webkit-tap-highlight-color: transparent;
+        text-decoration: none;
+    }
+    .hdr-btn:active { background: rgba(255,255,255,.28); }
 </style>
 @endsection
 
 @section('content')
 
 {{-- ═══════════════════ HEADER / CAPA ═══════════════════ --}}
-<header style="position: relative;">
-    <div style="height: 160px; width: 100%; overflow: hidden; position: relative; background-color: var(--card-primary);">
+@php
+    $socialTypes = ['instagram.com','wa.me','whatsapp','linkedin.com','tiktok.com','youtube.com','twitter.com','x.com','facebook.com','t.me','telegram','pinterest.com','spotify.com'];
+    $socialLinks = $card->links->filter(fn ($l) => $l->is_active && collect($socialTypes)->contains(fn ($d) => str_contains(strtolower($l->url), $d)));
+    $customLinks = $card->links->filter(fn ($l) => $l->is_active && !collect($socialTypes)->contains(fn ($d) => str_contains(strtolower($l->url), $d)));
+
+    $socialPillClass = function(string $url): string {
+        return match(true) {
+            str_contains($url, 'instagram')  => 'spill-ig',
+            str_contains($url, 'wa.me') || str_contains($url, 'whatsapp') => 'spill-wa',
+            str_contains($url, 'linkedin')   => 'spill-li',
+            str_contains($url, 'youtube')    => 'spill-yt',
+            str_contains($url, 'tiktok')     => 'spill-tk',
+            str_contains($url, 'twitter') || str_contains($url, 'x.com') => 'spill-tw',
+            str_contains($url, 'facebook')   => 'spill-fb',
+            str_contains($url, 't.me') || str_contains($url, 'telegram') => 'spill-tg',
+            str_contains($url, 'pinterest')  => 'spill-pi',
+            str_contains($url, 'spotify')    => 'spill-sp',
+            default => 'spill-def',
+        };
+    };
+@endphp
+
+<header>
+    {{-- Capa --}}
+    <div style="height:148px;width:100%;overflow:hidden;position:relative;background-color:var(--card-primary);">
         @if ($card->cover_photo)
             <img src="{{ Storage::url($card->cover_photo) }}"
                  alt="Capa de {{ $card->display_name }}"
                  style="width:100%;height:100%;object-fit:cover;object-position:center center;display:block;">
         @endif
-        <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.04) 0%,rgba(0,0,0,0.18) 100%);"></div>
-    </div>
+        <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.03) 0%,rgba(0,0,0,0.22) 100%);"></div>
 
-    {{-- Avatar --}}
-    <div style="position:absolute;left:50%;transform:translateX(-50%);top:118px;">
-        <div style="width:80px;height:80px;border-radius:9999px;overflow:hidden;
-                    border:3px solid #fff;box-shadow:0 2px 12px rgba(0,0,0,0.14);
-                    background-color:var(--card-primary);">
-            @if ($card->profile_photo)
-                <img src="{{ Storage::url($card->profile_photo) }}"
-                     alt="{{ $card->display_name }}"
-                     style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block;">
-            @else
-                <div style="width:100%;height:100%;display:flex;align-items:center;
-                            justify-content:center;color:#fff;font-size:28px;font-weight:800;letter-spacing:-1px;">
-                    {{ strtoupper(substr($card->display_name, 0, 1)) }}
-                </div>
-            @endif
+        {{-- Botões flutuantes na capa --}}
+        <div style="position:absolute;bottom:12px;right:12px;display:flex;gap:7px;">
+            <a href="{{ route('card.vcard', $card->slug) }}"
+               class="hdr-btn" title="Salvar contato">
+                <i data-lucide="contact" style="width:15px;height:15px;color:rgba(255,255,255,.9);"></i>
+            </a>
+            <button type="button" onclick="nexosnShare()" class="hdr-btn" title="Compartilhar">
+                <i data-lucide="share-2" style="width:15px;height:15px;color:rgba(255,255,255,.9);"></i>
+            </button>
         </div>
     </div>
+
+    {{-- Identidade — avatar esquerda + nome direita --}}
+    <div style="background:#fff;padding:0 16px 14px;">
+        <div style="display:flex;align-items:flex-end;gap:13px;">
+
+            {{-- Avatar ancorado à esquerda, sobrepõe a capa --}}
+            <div style="margin-top:-34px;flex-shrink:0;position:relative;">
+                <div style="width:72px;height:72px;border-radius:9999px;overflow:hidden;
+                            border:3.5px solid #fff;background-color:var(--card-primary);">
+                    @if ($card->profile_photo)
+                        <img src="{{ Storage::url($card->profile_photo) }}"
+                             alt="{{ $card->display_name }}"
+                             style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block;">
+                    @else
+                        <div style="width:100%;height:100%;display:flex;align-items:center;
+                                    justify-content:center;color:#fff;font-size:26px;font-weight:800;letter-spacing:-1px;">
+                            {{ strtoupper(substr($card->display_name, 0, 1)) }}
+                        </div>
+                    @endif
+                </div>
+                {{-- Badge logo --}}
+                @if ($card->logo)
+                <div style="position:absolute;bottom:1px;right:1px;width:20px;height:20px;border-radius:50%;
+                            border:2px solid #fff;overflow:hidden;background:#fff;">
+                    <img src="{{ Storage::url($card->logo) }}" alt="" style="width:100%;height:100%;object-fit:contain;">
+                </div>
+                @endif
+            </div>
+
+            {{-- Nome, cargo, empresa --}}
+            <div style="flex:1;min-width:0;padding-top:10px;padding-bottom:2px;">
+                <h1 style="font-size:18px;font-weight:700;color:#0d1117;letter-spacing:-.4px;
+                           line-height:1.2;margin:0 0 3px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                    {{ $card->display_name }}
+                </h1>
+                @if ($card->title)
+                <p style="font-size:10px;font-weight:600;color:#9ca3af;letter-spacing:.75px;
+                          text-transform:uppercase;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                    {{ $card->title }}
+                </p>
+                @endif
+                @if ($card->company)
+                <p style="font-size:11.5px;font-weight:500;color:var(--card-primary);margin:2px 0 0;
+                          opacity:.8;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">
+                    {{ $card->company }}
+                </p>
+                @endif
+            </div>
+
+        </div>
+    </div>
+
+    {{-- Divisor --}}
+    <div style="height:1px;background:rgba(0,0,0,0.06);margin:0 16px;"></div>
+
+    {{-- Social scroll --}}
+    @if ($socialLinks->isNotEmpty())
+    <div style="background:#fff;padding:12px 16px 10px;">
+        <p style="font-size:9.5px;font-weight:600;color:#c4c9d4;letter-spacing:.9px;text-transform:uppercase;margin:0 0 9px;">
+            Redes sociais
+        </p>
+        <div class="social-track" id="nexosn-social-track">
+            @foreach ($socialLinks as $link)
+            <a href="{{ $link->url }}" target="_blank" rel="noopener"
+               class="spill {{ $socialPillClass(strtolower($link->url)) }}">
+                <i data-lucide="{{ $link->lucide_icon }}" style="width:15px;height:15px;color:rgba(255,255,255,.88);flex-shrink:0;"></i>
+                <span class="spill-label">{{ $link->label }}</span>
+            </a>
+            @endforeach
+        </div>
+        @if ($socialLinks->count() > 3)
+        <div class="scroll-dots" id="nexosn-scroll-dots">
+            <div class="sd on"></div>
+            <div class="sd"></div>
+            <div class="sd"></div>
+        </div>
+        @endif
+    </div>
+    <div style="height:1px;background:rgba(0,0,0,0.06);margin:0 16px;"></div>
+    @endif
+
 </header>
 
-{{-- ═══════════════════ IDENTIDADE ═══════════════════ --}}
-<div style="padding:52px 20px 18px;text-align:center;">
-
-    @if ($card->logo)
-        <img src="{{ Storage::url($card->logo) }}"
-             alt="Logo {{ $card->company }}"
-             style="height:28px;margin:0 auto 10px;object-fit:contain;display:block;">
-    @endif
-
-    <h1 style="font-size:20px;font-weight:700;color:#111827;line-height:1.25;letter-spacing:-.3px;margin:0 0 4px;">
-        {{ $card->display_name }}
-    </h1>
-
-    @if ($card->title || $card->company)
-        <p style="font-size:13px;color:#9ca3af;margin:0;font-weight:400;">
-            {{ implode(' · ', array_filter([$card->title, $card->company])) }}
-        </p>
-    @endif
-
-</div>
-
-{{-- ═══════════════════ LINKS ═══════════════════ --}}
-@php
-    $socialTypes = ['instagram.com','wa.me','whatsapp','linkedin.com','tiktok.com','youtube.com','twitter.com','x.com','facebook.com','t.me','telegram','pinterest.com','spotify.com'];
-    $socialLinks = $card->links->filter(fn ($l) => collect($socialTypes)->contains(fn ($d) => str_contains(strtolower($l->url), $d)));
-    $customLinks = $card->links->filter(fn ($l) => !collect($socialTypes)->contains(fn ($d) => str_contains(strtolower($l->url), $d)));
-@endphp
-
-{{-- Redes sociais — ícones simples, sem excesso --}}
-@if ($socialLinks->isNotEmpty())
-<div style="display:flex;justify-content:center;gap:10px;padding:0 16px 16px;flex-wrap:wrap;">
-    @foreach ($socialLinks as $link)
-        <a href="{{ $link->url }}" target="_blank" rel="noopener"
-           class="spill" title="{{ $link->label }}">
-            <i data-lucide="{{ $link->lucide_icon }}" style="width:17px;height:17px;color:rgba(255,255,255,0.85);"></i>
-        </a>
-    @endforeach
-</div>
-@endif
-
-{{-- Links customizados (com tracking de cliques) --}}
+{{-- ═══════════════════ LINKS CUSTOMIZADOS ═══════════════════ --}}
 @if ($customLinks->isNotEmpty())
-<div style="padding:0 14px 8px;display:flex;flex-direction:column;gap:7px;">
+<div style="padding:8px 14px 4px;display:flex;flex-direction:column;gap:7px;">
     @foreach ($customLinks as $link)
         <a href="{{ route('card.link.click', [$card->slug, $link->id]) }}" rel="noopener" class="abtn abtn-primary">
             <i data-lucide="{{ $link->lucide_icon }}" style="width:16px;height:16px;opacity:.85;"></i>
@@ -193,6 +298,44 @@
     @endforeach
 </div>
 @endif
+
+<script>
+(function () {
+    const track = document.getElementById('nexosn-social-track');
+    const dots  = document.querySelectorAll('#nexosn-scroll-dots .sd');
+    if (!track) return;
+
+    /* drag scroll no desktop */
+    let drag = false, sx = 0, ss = 0;
+    track.addEventListener('mousedown', e => { drag = true; sx = e.pageX; ss = track.scrollLeft; });
+    document.addEventListener('mouseup', () => drag = false);
+    document.addEventListener('mousemove', e => {
+        if (!drag) return;
+        e.preventDefault();
+        track.scrollLeft = ss - (e.pageX - sx);
+    });
+
+    /* dots dinâmicos */
+    if (dots.length) {
+        track.addEventListener('scroll', () => {
+            const max = track.scrollWidth - track.clientWidth;
+            if (max <= 0) return;
+            const s = track.scrollLeft / max < 0.33 ? 0 : track.scrollLeft / max < 0.66 ? 1 : 2;
+            dots.forEach((d, i) => d.classList.toggle('on', i === s));
+        });
+    }
+})();
+
+function nexosnShare() {
+    const url = '{{ url("/u/" . $card->slug) }}';
+    const name = '{{ addslashes($card->display_name) }}';
+    if (navigator.share) {
+        navigator.share({ title: name, url }).catch(() => {});
+    } else {
+        navigator.clipboard.writeText(url);
+    }
+}
+</script>
 
 {{-- ════════════ SEÇÕES ════════════ --}}
 <div class="sections-wrap">

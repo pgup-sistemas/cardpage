@@ -1,5 +1,5 @@
-# Card — Arquitetura Técnica v1.0
-> Padrões, estrutura e decisões de implementação · 2026-07-09
+# Card — Arquitetura Técnica v1.2
+> Padrões, estrutura e decisões de implementação · 2026-07-09 · Atualizado: 2026-07-20
 
 ---
 
@@ -162,6 +162,7 @@ Schema::create('card_links', function (Blueprint $table) {
     $table->string('icon')->nullable(); // nome do ícone Lucide
     $table->boolean('is_active')->default(true);
     $table->unsignedSmallInteger('sort_order')->default(0);
+    $table->unsignedBigInteger('click_count')->default(0); // tracking de clicks
     $table->timestamps();
 });
 ```
@@ -274,14 +275,14 @@ public function refuse(CardAppointment $appointment): void
 
 ### ImageService
 ```php
-// Salva foto com validação, redimensiona e gera thumbnail
-public function saveProfilePhoto(UploadedFile $file, Card $card): string
+// Salva foto de perfil: corrige EXIF, crop quadrado do topo, resize 400×400, JPEG 85%
+public function storeProfile(UploadedFile $file): string
 
-// Salva foto de capa
-public function saveCoverPhoto(UploadedFile $file, Card $card): string
+// Salva foto de capa: corrige EXIF, crop 3:1 centralizado, resize 1200×400, JPEG 85%
+public function storeCover(UploadedFile $file): string
 
-// Gera thumbnail 300x300 de foto da galeria
-public function generateThumbnail(string $path): string
+// Salva foto de galeria: corrige EXIF, escala ao máximo 1200px de largura, JPEG 85%
+public function storePhoto(UploadedFile $file): string
 ```
 
 ---
@@ -361,6 +362,7 @@ Route::middleware(['auth', 'plan:agenda'])->group(function () {
 Route::get('/u/{slug}', [CardController::class, 'show'])->name('card.show');
 Route::post('/u/{slug}/contact', [ContactController::class, 'store'])->name('card.contact');
 Route::get('/u/{slug}/vcf', [CardController::class, 'downloadVcf'])->name('card.vcf');
+Route::get('/u/{slug}/link/{linkId}', [CardController::class, 'trackClick'])->name('card.link.click'); // tracking clicks
 Route::get('/u/{slug}/agendar', [AppointmentController::class, 'create'])->name('card.schedule');
 Route::post('/u/{slug}/agendar', [AppointmentController::class, 'store'])->name('card.schedule.store');
 Route::get('/u/{slug}/agendar/slots', [AppointmentController::class, 'slots'])->name('card.schedule.slots');
@@ -457,4 +459,70 @@ public function detectIcon(string $url): string
 
 ---
 
-*Arquitetura v1.0 · Card SaaS · PageUp Sistemas · 2026*
+---
+
+## 10. Analytics — fluxo de dados
+
+### Detecção de origem do tráfego
+```php
+// CardController::detectSource(string $referer): string
+// Chamado em show() ao registrar cada card_view
+match(true) {
+    str_contains($referer, 'wa.me') || str_contains($referer, 'whatsapp') => 'whatsapp',
+    str_contains($referer, 'instagram')  => 'instagram',
+    str_contains($referer, 'google')     => 'google',
+    str_contains($referer, 'facebook')   => 'facebook',
+    str_contains($referer, 'linkedin')   => 'linkedin',
+    str_contains($referer, 'tiktok')     => 'tiktok',
+    str_contains($referer, 'twitter') || str_contains($referer, 'x.com') => 'twitter',
+    str_contains($referer, 'telegram')   => 'telegram',
+    $referer === ''                      => 'direct',
+    default                              => 'outros',
+}
+```
+
+### Tracking de clicks em links
+```
+Visitante clica no link no cartão
+    → href="/u/{slug}/link/{linkId}"
+    → CardController@trackClick
+    → card_links.click_count++
+    → redirect()->away($link->url)
+```
+
+### Overview — dados do dashboard
+```php
+// App\Livewire\Dashboard\Overview
+$viewsChart   = card_views agrupados por DATE() nos últimos 30 dias (lacunas = 0)
+$sources      = card_views agrupados por source nos últimos 30 dias, com %
+$topLinks     = card_links ordenados por click_count DESC, limite 10
+```
+
+---
+
+## 11. Service Worker (PWA básico)
+
+Arquivo: `public/sw.js`
+
+| Estratégia | Padrão de URL |
+|---|---|
+| Cache First | `/build/assets/`, `/fonts/`, `/images/icon-*` |
+| Stale-While-Revalidate | `/u/{slug}` (cartão público), `/storage/` (fotos) |
+| Network First | `/u/{slug}/agendar/slots` |
+| Network Only | `/dashboard/*`, `/livewire/*`, `/webhook/*`, `/api/*` |
+
+Versão atual: `nexosn-v2` (bumpar ao mudar estratégias para invalidar caches)
+
+---
+
+## Changelog
+
+| Versão | Data | Alterações |
+|---|---|---|
+| v1.0 | 2026-07-09 | Documento inicial |
+| v1.1 | 2026-07-09 | + Módulo Agenda · + brand colors migrations · + AppointmentService |
+| v1.2 | 2026-07-20 | + ImageService reescrito (storeProfile/storeCover/storePhoto com EXIF+crop) · + click_count em card_links · + source em card_views · + rota card.link.click · + seção 10 Analytics · + seção 11 Service Worker |
+
+---
+
+*Arquitetura v1.2 · Card SaaS · PageUp Sistemas · 2026*

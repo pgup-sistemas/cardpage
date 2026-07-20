@@ -1,5 +1,5 @@
-# Card — PRD (Product Requirements Document) v1.0
-> Histórias de usuário priorizadas · PageUp Sistemas · 2026-07-09
+# Card — PRD (Product Requirements Document) v1.2
+> Histórias de usuário priorizadas · PageUp Sistemas · 2026-07-09 · Atualizado: 2026-07-20
 
 ---
 
@@ -24,8 +24,8 @@ Prioridade: P1 (bloqueante) → P2 (essencial) → P3 (desejável no MVP)
 
 | ID | História | Critério de aceite | Prio |
 |---|---|---|---|
-| C-01 | Como titular, quero fazer upload da minha foto de capa para personalizar o header | Foto salva, exibida como background do header, fallback na cor primária | P1 |
-| C-02 | Como titular, quero fazer upload e recortar minha foto de perfil | Upload com crop circular, thumbnail gerado, exibido sobreposto à capa | P1 |
+| C-01 | Como titular, quero fazer upload da minha foto de capa para personalizar o header | Foto padronizada no servidor (EXIF corrigido, crop 3:1 do centro, 1200×400px), exibida como background do header, fallback na cor primária | P1 |
+| C-02 | Como titular, quero fazer upload da minha foto de perfil | Foto padronizada no servidor (EXIF corrigido, crop quadrado do topo, 400×400px), exibida sobreposta à capa | P1 |
 | C-03 | Como titular, quero preencher nome, cargo e bio do meu cartão | Campos salvos e exibidos no cartão público | P1 |
 | C-04 | Como titular Pro, quero escolher a cor primária do meu cartão | Color picker salva HEX válido, preview ao vivo no painel, aplicado no cartão público | P2 |
 | C-05 | Como titular Pro, quero escolher a cor dos botões do meu cartão | Picker independente da cor primária, preview ao vivo | P2 |
@@ -67,6 +67,17 @@ Prioridade: P1 (bloqueante) → P2 (essencial) → P3 (desejável no MVP)
 
 ---
 
+### Épico 5b · Galeria e Mídia
+
+| ID | História | Critério de aceite | Prio |
+|---|---|---|---|
+| G-01 | Como visitante, quero ver a galeria de fotos do titular em grade | Grid 3 colunas, fotos com proporção quadrada via object-cover | P1 |
+| G-02 | Como visitante, quero clicar em uma foto e vê-la em tela cheia | Lightbox fullscreen com overlay escuro, foto centralizada, caption exibido | P1 |
+| G-03 | Como visitante, quero navegar entre as fotos no lightbox | Setas prev/next, dots indicadores de posição, contador "X / Y", swipe touch, teclado ← → Esc | P2 |
+| G-04 | Como titular, quero excluir fotos da galeria com um botão visível | Botão X vermelho sempre visível no canto superior direito de cada foto (inclusive no mobile) | P2 |
+
+---
+
 ### Épico 6 · Compartilhamento e QR Code
 
 | ID | História | Critério de aceite | Prio |
@@ -81,9 +92,13 @@ Prioridade: P1 (bloqueante) → P2 (essencial) → P3 (desejável no MVP)
 
 | ID | História | Critério de aceite | Prio |
 |---|---|---|---|
-| P-01 | Como titular, quero ver quantas vezes meu cartão foi acessado | Contador de visualizações únicas no dashboard | P2 |
+| P-01 | Como titular, quero ver quantas vezes meu cartão foi acessado | Contadores de visualizações totais e dos últimos 7 dias no dashboard | P2 |
+| P-01a | Como titular, quero ver um gráfico de visitas dos últimos 30 dias | Gráfico de barras diário, lacunas preenchidas com zero, tooltip com data e total | P2 |
+| P-01b | Como titular, quero saber de onde vêm meus visitantes | Painel de origens: direto, WhatsApp, Instagram, Google, Facebook, LinkedIn, TikTok, Telegram, Outros — com percentual e cor por plataforma | P2 |
+| P-01c | Como titular, quero ver quais links recebem mais cliques | Ranking com barra proporcional de clicks por link | P2 |
 | P-02 | Como titular, quero editar meu cartão com preview ao vivo | Painel exibe preview atualizado em tempo real (Livewire) | P1 |
 | P-03 | Como titular, quero gerenciar minha assinatura | Ver plano, vencimento, botão de upgrade | P1 |
+| P-04 | Como titular, quero saber quantas mensagens não li sem entrar na página | Badge com contador na sidebar ao lado de "Mensagens" | P3 |
 
 ---
 
@@ -129,12 +144,25 @@ Prioridade: P1 (bloqueante) → P2 (essencial) → P3 (desejável no MVP)
 | ID | História | Fase |
 |---|---|---|
 | BK-01 | Como titular, quero ter múltiplos cartões na mesma conta | v1.1 |
-| BK-02 | Como titular, quero ver analytics detalhados por link e período | v1.1 |
+| BK-02 | Como titular, quero ver analytics por período customizado com filtros | v1.1 |
 | BK-03 | Como titular, quero que agendamentos sejam confirmados automaticamente | v1.1 |
 | BK-04 | Como visitante, quero adicionar agendamento confirmado ao Google Calendar | v1.1 |
 | BK-05 | Como titular, quero usar meu próprio domínio no cartão | v1.2 |
 | BK-06 | Como titular, quero login via Google | v1.2 |
 | BK-07 | Como titular, quero escolher entre temas visuais do marketplace | v2.0 |
+| BK-08 | Como titular, quero página dedicada de analytics com mapa de calor das seções | v1.1 |
+| BK-09 | Como titular, quero exportar leads (mensagens e agendamentos) em CSV | v1.1 |
+| BK-10 | Como titular, quero receber notificação push no painel ao receber nova mensagem | v1.1 |
+
+---
+
+## Changelog
+
+| Versão | Data | Alterações |
+|---|---|---|
+| v1.0 | 2026-07-09 | Documento inicial |
+| v1.1 | 2026-07-09 | + Épico 2 atualizado com capa/cores · + Épico 10 Agenda completo |
+| v1.2 | 2026-07-20 | + Épico 5b Galeria/Lightbox (G-01 a G-04) · + P-01a/b/c analytics · + P-04 badge mensagens · + C-01/C-02 padronização de imagens · + BK-08/09/10 backlog |
 
 ---
 

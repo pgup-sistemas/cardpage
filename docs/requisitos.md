@@ -1,6 +1,6 @@
-# Card — Documento de Requisitos v1.1
+# Card — Documento de Requisitos v1.2
 > Cartão Digital SaaS · PageUp Sistemas · Porto Velho, RO
-> Data: 2026-07-09 · Atualizado: 2026-07-09 · Status: APROVADO PARA IMPLEMENTAÇÃO
+> Data: 2026-07-09 · Atualizado: 2026-07-20 · Status: APROVADO PARA IMPLEMENTAÇÃO
 
 ---
 
@@ -48,19 +48,20 @@
 
 | ID | Requisito | Plano |
 |---|---|---|
-| C-01 | Foto de perfil com upload e recorte (crop circular) | Free/Pro |
-| C-02 | Foto de capa/banner — ocupa 100% da largura como background do header | Free/Pro |
+| C-01 | Foto de perfil com upload — padronizada no servidor: orientação EXIF corrigida, recorte quadrado a partir do topo, redimensionada para 400×400px, JPEG 85% | Free/Pro |
+| C-02 | Foto de capa/banner — padronizada no servidor: orientação EXIF corrigida, recorte proporcional 3:1 centralizado, redimensionada para 1200×400px, JPEG 85% | Free/Pro |
 | C-03 | Avatar sobrepõe a borda inferior da capa com borda branca (3px) | Free/Pro |
 | C-04 | Logotipo/logomarca separado da foto de perfil | Pro |
 | C-05 | Nome completo, título/cargo, empresa/negócio | Free/Pro |
 | C-06 | Texto "Sobre" — bio com rich text simples (negrito, itálico, quebra de linha) | Free/Pro |
-| C-07 | Galeria de fotos com thumbnails | Free: até 3 · Pro: até 30 |
+| C-07 | Galeria de fotos com thumbnails em grid 3 colunas | Free: até 3 · Pro: até 30 |
+| C-07a | Lightbox fullscreen ao clicar em foto da galeria — navegação por setas, dots, swipe touch e teclado | Free/Pro |
 | C-08 | Cor primária personalizável (header, fundo) via color picker | Pro |
 | C-09 | Cor de botão personalizável (CTAs) via color picker independente | Pro |
 | C-10 | Preview ao vivo das cores no painel enquanto o titular edita | Pro |
 | C-11 | Slug personalizado (`/u/meu-nome`) | Free/Pro |
 | C-12 | Ativar/desativar cartão sem excluir | Free/Pro |
-| C-13 | Marca d'água "Criado com Card" no rodapé | Free (removível no Pro) |
+| C-13 | Logo NEXOSN no rodapé do cartão com link para o site do produto — sempre visível; usuários Free exibem também texto "Criado com NEXOSN" | Free (logo) · Pro (somente logo, sem texto) |
 | C-14 | Localização — endereço exibido como botão tappable que abre Google Maps | Free/Pro |
 | C-15 | Compartilhar localização — Web Share API no mobile, fallback copia link Google Maps | Free/Pro |
 
@@ -77,6 +78,7 @@
 | L-05 | Link de agendamento externo (Calendly, Google Agenda, Cal.com) | Free/Pro |
 | L-06 | Ordenação drag-and-drop dos links no painel | Free/Pro |
 | L-07 | Ativar/desativar link individualmente sem excluir | Free/Pro |
+| L-08 | Tracking de clicks por link — rota intermediária `/u/{slug}/link/{id}` incrementa `click_count` antes de redirecionar para a URL destino | Free/Pro |
 
 ---
 
@@ -120,12 +122,16 @@
 
 | ID | Requisito | Plano |
 |---|---|---|
-| P-01 | Dashboard com total de visualizações do cartão | Free/Pro |
+| P-01 | Dashboard com total de visualizações do cartão e visualizações dos últimos 7 dias | Free/Pro |
+| P-01a | Gráfico de barras com visitas nos últimos 30 dias (agrupado por dia, lacunas preenchidas com zero) | Free/Pro |
+| P-01b | Painel de origem do tráfego (últimos 30 dias): direto, WhatsApp, Instagram, Google, Facebook, LinkedIn, TikTok, Telegram, Outros — com percentual e barra proporcional por cor de plataforma | Free/Pro |
+| P-01c | Ranking de clicks por link — top 10 links ativos ordenados por `click_count`, com barra proporcional | Free/Pro |
 | P-02 | Editor do cartão — todos os campos dos módulos acima | Free/Pro |
 | P-03 | Preview ao vivo do cartão enquanto edita (incluindo cores) | Free/Pro |
 | P-04 | Gestão de assinatura — plano atual, vencimento, upgrade | Free/Pro |
 | P-05 | Histórico de pagamentos/faturas | Free/Pro |
 | P-06 | Botão de compartilhamento com QR Code | Free/Pro |
+| P-07 | Badge de contagem de mensagens não lidas no item "Mensagens" da sidebar | Free/Pro |
 
 ---
 
@@ -151,7 +157,7 @@
 | Cores de marca (2 pickers) | ✗ cores fixas Card | ✅ |
 | Agenda de agendamentos | ✗ | ✅ |
 | Histórico de mensagens | ✗ | ✅ |
-| Analytics detalhado | ✗ | v1.1 |
+| Analytics detalhado (gráfico 30 dias + origens + clicks por link) | ✅ | ✅ |
 | Marca d'água | ✅ obrigatório | ✗ removida |
 | PIX no cartão | ✅ | ✅ |
 | vCard / QR Code | ✅ | ✅ |
@@ -278,9 +284,10 @@
 /u/{slug}                       Cartão público
 /u/{slug}/contact               POST — formulário de contato
 /u/{slug}/vcf                   Download vCard
-/u/{slug}/agendar               GET  — tela de agendamento              ← NOVO
-/u/{slug}/agendar               POST — submissão da solicitação         ← NOVO
-/u/{slug}/agendar/slots         GET  — slots disponíveis (JSON)         ← NOVO
+/u/{slug}/link/{id}             GET  — tracking de click em link, redireciona para URL
+/u/{slug}/agendar               GET  — tela de agendamento
+/u/{slug}/agendar               POST — submissão da solicitação
+/u/{slug}/agendar/slots         GET  — slots disponíveis (JSON)
 
 /appointments/{token}/confirm   GET — link de confirmação pelo titular  ← NOVO
 /appointments/{token}/refuse    GET — link de recusa pelo titular       ← NOVO
@@ -310,7 +317,8 @@ cards
 
 card_links
   id, card_id (FK), type (enum: social|custom|pix|schedule),
-  label, url, icon, is_active (bool), sort_order (int)
+  label, url, icon, is_active (bool), sort_order (int),
+  click_count (bigint unsigned, default 0)        ← rastreia clicks
 
 card_photos
   id, card_id (FK), path, thumbnail_path, alt, sort_order, created_at
@@ -320,7 +328,8 @@ contact_messages
   message, read_at (nullable), created_at
 
 card_views
-  id, card_id (FK), ip_hash, user_agent, viewed_at
+  id, card_id (FK), ip_hash, user_agent, viewed_at,
+  source (varchar 40, default 'direct')           ← origem do tráfego
 
 card_schedules                            ← NOVO
   id, card_id (FK), service_name,
@@ -362,6 +371,7 @@ card_appointments                         ← NOVO
 |---|---|---|
 | v1.0 | 2026-07-09 | Documento inicial |
 | v1.1 | 2026-07-09 | + C-02/C-03 header com foto de capa · + C-08/C-09/C-10 cores de marca 2 pickers (Pro) · + M-10 Agenda completo (AG-01 a AG-20) · Modelo de dados atualizado · Rotas atualizadas · Limites de plano atualizados |
+| v1.2 | 2026-07-20 | + C-01/C-02 padronização de imagens no servidor (EXIF, crop, resize) · + C-07a lightbox fullscreen na galeria (swipe, teclado, dots, setas) · + C-13 logo NEXOSN no rodapé com link · + L-08 tracking de clicks por link (rota intermediária + click_count) · + P-01a gráfico 30 dias · + P-01b origem do tráfego (detectSource) · + P-01c ranking de clicks por link · + P-07 badge de mensagens não lidas na sidebar · + campo source em card_views · + campo click_count em card_links · + rota /u/{slug}/link/{id} · Analytics movido de v1.1 para disponível em Free/Pro |
 
 ---
 

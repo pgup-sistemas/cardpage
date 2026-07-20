@@ -65,13 +65,12 @@
             <img src="{{ Storage::url($photo->path) }}"
                  alt="{{ $photo->caption ?? 'Foto' }}"
                  class="w-full h-full object-cover">
-            <div class="absolute inset-0 bg-black/0 group-hover:bg-black/40 transition flex items-center justify-center">
-                <button wire:click="deletePhoto({{ $photo->id }})"
-                        wire:confirm="Excluir esta foto?"
-                        class="opacity-0 group-hover:opacity-100 transition text-white bg-red-500/80 rounded-full p-1.5 hover:bg-red-600">
-                    <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
-                </button>
-            </div>
+            <button wire:click="deletePhoto({{ $photo->id }})"
+                    wire:confirm="Excluir esta foto?"
+                    class="absolute top-1 right-1 w-6 h-6 flex items-center justify-center rounded-full bg-red-500 text-white shadow-md hover:bg-red-600 transition z-10"
+                    title="Excluir foto">
+                <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+            </button>
             @if ($photo->caption)
             <div class="absolute bottom-0 left-0 right-0 px-1.5 py-1 bg-black/50">
                 <p class="text-white text-[10px] truncate">{{ $photo->caption }}</p>
