@@ -39,6 +39,10 @@
             </div>
             @error('slug')<p class="text-xs text-red-600 mt-1">{{ $message }}</p>@enderror
             <p class="text-xs text-gray-400 mt-1">Apenas letras minúsculas, números e hífens. Mín. 3 caracteres.</p>
+            <p class="text-xs text-amber-600 mt-1 flex items-center gap-1">
+                <i data-lucide="alert-triangle" class="w-3 h-3 shrink-0"></i>
+                Alterar o link invalida QR Codes e links já compartilhados.
+            </p>
         </div>
     </div>
 
