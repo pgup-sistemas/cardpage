@@ -147,7 +147,7 @@
 
     /* botões de ação rápida no header */
     .hdr-btn {
-        width: 32px; height: 32px; border-radius: 50%;
+        width: 40px; height: 40px; border-radius: 50%;
         background: rgba(255,255,255,.15); border: none;
         display: flex; align-items: center; justify-content: center;
         cursor: pointer; transition: background .12s;
@@ -197,10 +197,10 @@
         <div style="position:absolute;bottom:12px;right:12px;display:flex;gap:7px;">
             <a href="{{ route('card.vcard', $card->slug) }}"
                class="hdr-btn" title="Salvar contato">
-                <i data-lucide="contact" style="width:15px;height:15px;color:rgba(255,255,255,.9);"></i>
+                <i data-lucide="contact" style="width:18px;height:18px;color:rgba(255,255,255,.9);"></i>
             </a>
             <button type="button" onclick="nexosnShare()" class="hdr-btn" title="Compartilhar">
-                <i data-lucide="share-2" style="width:15px;height:15px;color:rgba(255,255,255,.9);"></i>
+                <i data-lucide="share-2" style="width:18px;height:18px;color:rgba(255,255,255,.9);"></i>
             </button>
         </div>
     </div>
@@ -210,8 +210,8 @@
         <div style="display:flex;align-items:flex-end;gap:13px;">
 
             {{-- Avatar ancorado à esquerda, sobrepõe a capa --}}
-            <div style="margin-top:-34px;flex-shrink:0;position:relative;">
-                <div style="width:72px;height:72px;border-radius:9999px;overflow:hidden;
+            <div style="margin-top:-42px;flex-shrink:0;position:relative;">
+                <div style="width:88px;height:88px;border-radius:9999px;overflow:hidden;
                             border:3.5px solid #fff;background-color:var(--card-primary);">
                     @if ($card->profile_photo)
                         <img src="{{ Storage::url($card->profile_photo) }}"
@@ -219,7 +219,7 @@
                              style="width:100%;height:100%;object-fit:cover;object-position:top center;display:block;">
                     @else
                         <div style="width:100%;height:100%;display:flex;align-items:center;
-                                    justify-content:center;color:#fff;font-size:26px;font-weight:800;letter-spacing:-1px;">
+                                    justify-content:center;color:#fff;font-size:32px;font-weight:800;letter-spacing:-1px;">
                             {{ strtoupper(substr($card->display_name, 0, 1)) }}
                         </div>
                     @endif

@@ -3,7 +3,7 @@
  * Estratégias: Cache First | Stale-While-Revalidate | Network First | Network Only
  */
 
-const SW_VERSION = 'nexosn-v2';
+const SW_VERSION = 'nexosn-v3';
 
 const PRECACHE = [
     '/offline.html',
@@ -22,14 +22,14 @@ const CACHE_FIRST_PATTERNS = [
     /\/images\/og-default/,
 ];
 
-// Stale-While-Revalidate: perfil público e imagens do Storage
+// Stale-While-Revalidate: apenas imagens do Storage (não o HTML do cartão)
 const SWR_PATTERNS = [
-    /^https?:\/\/[^/]+\/u\/[^/]+$/,   // /u/{slug}
     /\/storage\//,                      // fotos do perfil, capa, galeria
 ];
 
-// Network First (com fallback cache): slots de agenda
+// Network First (com fallback cache): cartão público + slots de agenda
 const NETWORK_FIRST_PATTERNS = [
+    /^https?:\/\/[^/]+\/u\/[^/]+$/,   // /u/{slug} — sempre fresco para refletir mudanças de cor
     /\/u\/[^/]+\/agendar\/slots/,
 ];
 
