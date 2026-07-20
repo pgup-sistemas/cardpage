@@ -85,7 +85,7 @@
             <i data-lucide="trending-up" class="w-3.5 h-3.5"></i>
             Visitas — últimos 30 dias
         </p>
-        @php $maxViews = max(array_column($viewsChart, 'total'), 1); @endphp
+        @php $maxViews = max(array_merge(array_column($viewsChart, 'total'), [1])); @endphp
         <div style="display:flex;align-items:flex-end;gap:3px;height:60px;">
             @foreach ($viewsChart as $day)
             @php $h = max(4, round($day['total'] / $maxViews * 60)); @endphp
