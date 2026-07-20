@@ -64,8 +64,14 @@
                 Salvar agenda
             </button>
             <button type="button" wire:click="toggleActive"
-                    class="px-4 py-[11px] rounded-[10px] border text-[13px] font-medium {{ $isActive ? 'border-green-500 text-green-700 bg-green-50' : 'border-gray-300 text-gray-600' }}">
-                {{ $isActive ? 'Agenda ativa' : 'Agenda pausada' }}
+                    title="{{ $isActive ? 'Clique para pausar' : 'Clique para ativar no cartão' }}"
+                    class="px-4 py-[11px] rounded-[10px] border text-[13px] font-medium flex items-center gap-1.5 transition
+                           {{ $isActive ? 'border-green-500 text-green-700 bg-green-50 hover:bg-red-50 hover:text-red-600 hover:border-red-300' : 'border-amber-400 text-amber-700 bg-amber-50 hover:bg-green-50 hover:text-green-700 hover:border-green-400' }}">
+                @if ($isActive)
+                    <i data-lucide="circle-check" class="w-3.5 h-3.5"></i> Agenda ativa
+                @else
+                    <i data-lucide="circle-pause" class="w-3.5 h-3.5"></i> Pausada — clique para ativar
+                @endif
             </button>
         </div>
 
