@@ -1,5 +1,4 @@
 <x-app-layout>
-<x-slot name="header"></x-slot>
 
 @php
     $user    = auth()->user();
