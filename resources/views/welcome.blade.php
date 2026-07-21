@@ -636,6 +636,49 @@ a { text-decoration: none; }
 .benefit-item h4 { font-size: 14px; font-weight: 700; color: #fff; }
 .benefit-item p { font-size: 12px; color: rgba(255,255,255,0.6); line-height: 1.5; }
 
+/* ---- SERVIÇOS + PIX SHOWCASE ---- */
+.svcshow-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
+@media(max-width: 900px) { .svcshow-grid { grid-template-columns: 1fr; gap: 40px; } }
+.svcshow-list { display: flex; flex-direction: column; gap: 14px; margin-top: 28px; }
+.svcshow-list li { display: flex; gap: 10px; align-items: flex-start; font-size: 14px; color: #52514E; line-height: 1.5; }
+.svcshow-list li svg { flex-shrink: 0; margin-top: 1px; }
+.svcshow-visual { position: relative; max-width: 380px; margin: 0 auto; padding: 20px 40px 40px 0; }
+@media(max-width: 520px) { .svcshow-visual { padding: 0; } }
+.svcshow-card {
+    background: #fff; border-radius: 20px; border: 1px solid #E0E0DE;
+    box-shadow: 0 24px 64px rgba(0,48,73,0.12); overflow: hidden; position: relative;
+}
+.svcshow-header {
+    padding: 16px 18px; border-bottom: 1px solid #f0f0ee;
+    display: flex; align-items: center; gap: 10px; background: #F8F8F7;
+}
+.svcshow-header h4 { font-size: 13px; font-weight: 700; color: #1a1f2e; }
+.svcshow-header p { font-size: 10px; color: #999; margin-top: 1px; }
+.svcshow-item { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 14px 18px; border-bottom: 1px solid #f5f5f4; }
+.svcshow-item:last-child { border-bottom: none; }
+.svcshow-item-name { font-size: 13px; font-weight: 600; color: #1a1f2e; }
+.svcshow-item-desc { font-size: 11px; color: #999; margin-top: 2px; }
+.svcshow-price { font-size: 14px; font-weight: 800; color: #003049; white-space: nowrap; }
+.svcshow-modal {
+    position: absolute; bottom: -28px; right: -28px; width: 168px;
+    background: #fff; border-radius: 16px; box-shadow: 0 20px 50px rgba(0,0,0,0.22);
+    border: 1px solid #eee; padding: 16px; text-align: center;
+}
+@media(max-width: 520px) { .svcshow-modal { position: static; margin: 20px auto 0; } }
+.svcshow-modal-title { font-size: 11px; font-weight: 700; color: #1a1f2e; margin-bottom: 2px; }
+.svcshow-modal-price { font-size: 16px; font-weight: 900; color: #003049; margin-bottom: 10px; }
+.svcshow-modal-qr { background: #f8f8f7; border-radius: 10px; padding: 8px; display: inline-block; margin-bottom: 8px; }
+.svcshow-modal-btn {
+    background: linear-gradient(90deg,#F77F00,#FCBF49); color: #003049; font-size: 10px; font-weight: 800;
+    padding: 6px 0; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 4px;
+}
+.svcshow-badge {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(252,191,73,0.15); color: #995f00; font-size: 10px; font-weight: 800;
+    letter-spacing: .04em; text-transform: uppercase; padding: 4px 10px; border-radius: 100px;
+    margin-top: 12px;
+}
+
 /* ---- RESPONSIVE ---- */
 @media(max-width: 640px) {
     .navbar-brand { font-size: 18px; }
@@ -1362,6 +1405,103 @@ a { text-decoration: none; }
     </div>
 </section>
 
+<!-- ═══ SERVIÇOS + PIX ═══ -->
+<section class="section section-alt" id="servicos-pix">
+    <div class="container">
+        <div class="svcshow-grid">
+
+            <div>
+                <div class="section-tag" style="background:rgba(252,191,73,0.15);color:#995f00;">Exclusivo no Brasil</div>
+                <h2 class="section-title">Cobre por cada serviço,<br>direto no seu perfil</h2>
+                <p class="section-sub">Cadastre quantos serviços quiser — consulta, avaliação, sessão, produto — cada um com seu próprio preço. O cliente escolhe, escaneia o QR Code PIX gerado na hora e paga sem sair do seu perfil.</p>
+
+                <ul class="svcshow-list">
+                    <li>
+                        <svg data-lucide="check-circle" style="width:20px;height:20px;color:#16a34a;"></svg>
+                        <span>PIX dinâmico gerado na hora — EMV BR Code, sem precisar de integração bancária</span>
+                    </li>
+                    <li>
+                        <svg data-lucide="check-circle" style="width:20px;height:20px;color:#16a34a;"></svg>
+                        <span>Catálogo com preços diferentes por serviço — ilimitado no plano Pro</span>
+                    </li>
+                    <li>
+                        <svg data-lucide="check-circle" style="width:20px;height:20px;color:#16a34a;"></svg>
+                        <span>Link direto de pagamento para cada serviço — cole na bio, no WhatsApp ou no story</span>
+                    </li>
+                </ul>
+
+                <div class="svcshow-badge">
+                    <svg data-lucide="sparkles" style="width:12px;height:12px;"></svg>
+                    Nenhum concorrente internacional oferece isso
+                </div>
+            </div>
+
+            <div class="svcshow-visual">
+                <div class="svcshow-card">
+                    <div class="svcshow-header">
+                        <svg data-lucide="receipt" style="width:18px;height:18px;color:#003049;"></svg>
+                        <div>
+                            <h4>Serviços disponíveis</h4>
+                            <p>Ana Paula Costa · Nutricionista</p>
+                        </div>
+                    </div>
+                    <div class="svcshow-item">
+                        <div>
+                            <div class="svcshow-item-name">Consulta de avaliação</div>
+                            <div class="svcshow-item-desc">Primeira consulta · 50 min</div>
+                        </div>
+                        <div class="svcshow-price">R$ 150</div>
+                    </div>
+                    <div class="svcshow-item">
+                        <div>
+                            <div class="svcshow-item-name">Retorno mensal</div>
+                            <div class="svcshow-item-desc">Acompanhamento · 30 min</div>
+                        </div>
+                        <div class="svcshow-price">R$ 90</div>
+                    </div>
+                    <div class="svcshow-item">
+                        <div>
+                            <div class="svcshow-item-name">Plano alimentar personalizado</div>
+                            <div class="svcshow-item-desc">Entrega em até 3 dias</div>
+                        </div>
+                        <div class="svcshow-price">R$ 220</div>
+                    </div>
+                </div>
+
+                <!-- Modal PIX flutuante -->
+                <div class="svcshow-modal">
+                    <div class="svcshow-modal-title">Consulta de avaliação</div>
+                    <div class="svcshow-modal-price">R$ 150,00</div>
+                    <div class="svcshow-modal-qr">
+                        <svg viewBox="0 0 48 48" width="48" height="48">
+                            <rect fill="#fff" width="48" height="48"/>
+                            <rect fill="#003049" x="2" y="2" width="14" height="14" rx="2"/>
+                            <rect fill="#fff" x="4" y="4" width="10" height="10" rx="1"/>
+                            <rect fill="#003049" x="7" y="7" width="4" height="4"/>
+                            <rect fill="#003049" x="32" y="2" width="14" height="14" rx="2"/>
+                            <rect fill="#fff" x="34" y="4" width="10" height="10" rx="1"/>
+                            <rect fill="#003049" x="37" y="7" width="4" height="4"/>
+                            <rect fill="#003049" x="2" y="32" width="14" height="14" rx="2"/>
+                            <rect fill="#fff" x="4" y="34" width="10" height="10" rx="1"/>
+                            <rect fill="#003049" x="7" y="37" width="4" height="4"/>
+                            <rect fill="#003049" x="20" y="20" width="8" height="8"/>
+                            <rect fill="#003049" x="32" y="32" width="4" height="4"/>
+                            <rect fill="#003049" x="40" y="32" width="6" height="4"/>
+                            <rect fill="#003049" x="32" y="40" width="6" height="4"/>
+                            <rect fill="#003049" x="40" y="40" width="4" height="4"/>
+                        </svg>
+                    </div>
+                    <div class="svcshow-modal-btn">
+                        <svg data-lucide="copy" style="width:10px;height:10px;"></svg>
+                        Pix copia e cola
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</section>
+
 <!-- ═══ COMO FUNCIONA ═══ -->
 <section class="section section-alt">
     <div class="container">
@@ -1805,6 +1945,14 @@ a { text-decoration: none; }
                     <tr class="cmp-cat"><td colspan="6">Pagamentos &amp; Mercado BR</td></tr>
                     <tr>
                         <td>PIX integrado no perfil</td>
+                        <td class="cmp-val cmp-us"><span class="cv cv-y cv-u">✓ <span class="badge-uniq">BR único</span></span></td>
+                        <td class="cmp-val"><span class="cv cv-n">—</span></td>
+                        <td class="cmp-val"><span class="cv cv-n">—</span></td>
+                        <td class="cmp-val"><span class="cv cv-n">—</span></td>
+                        <td class="cmp-val"><span class="cv cv-n">—</span></td>
+                    </tr>
+                    <tr>
+                        <td>Catálogo de serviços com PIX dinâmico por item</td>
                         <td class="cmp-val cmp-us"><span class="cv cv-y cv-u">✓ <span class="badge-uniq">BR único</span></span></td>
                         <td class="cmp-val"><span class="cv cv-n">—</span></td>
                         <td class="cmp-val"><span class="cv cv-n">—</span></td>
