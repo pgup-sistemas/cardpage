@@ -27,7 +27,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->login()
-            ->brandName('Card · Admin')
+            ->brandName('NEXOSN · Admin')
             ->colors([
                 'primary' => Color::hex('#003049'),
             ])
