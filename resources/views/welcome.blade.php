@@ -672,19 +672,18 @@ a { text-decoration: none; }
     background: linear-gradient(90deg,#F77F00,#FCBF49); color: #003049; font-size: 10px; font-weight: 800;
     padding: 6px 0; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 4px;
 }
-/* ---- COMPARATIVO (fundo destacado) ---- */
+/* ---- COMPARATIVO (mesmo fundo da seção Missão) ---- */
 .section-comparativo {
-    background: linear-gradient(180deg, #F4F3F0 0%, #E9ECEF 100%);
+    background: #003049;
     position: relative;
     overflow: hidden;
 }
 .section-comparativo::before {
     content: '';
     position: absolute; inset: 0;
-    background-image: radial-gradient(circle at 1px 1px, rgba(0,48,73,0.08) 1px, transparent 0);
-    background-size: 26px 26px;
-    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 0%, transparent 75%);
-            mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 0%, transparent 75%);
+    background-image: radial-gradient(circle at 1px 1px, #fff 1px, transparent 0);
+    background-size: 28px 28px;
+    opacity: .04;
     pointer-events: none;
 }
 .section-comparativo::after {
@@ -694,6 +693,11 @@ a { text-decoration: none; }
     pointer-events: none;
 }
 .section-comparativo .container { position: relative; }
+.section-comparativo .section-tag {
+    background: rgba(252,191,73,0.12); color: #FCBF49; border: 1px solid rgba(252,191,73,0.2);
+}
+.section-comparativo .section-title { color: #fff; }
+.section-comparativo .section-sub { color: rgba(255,255,255,0.65); }
 
 .svcshow-badge {
     display: inline-flex; align-items: center; gap: 6px;
@@ -2026,7 +2030,7 @@ a { text-decoration: none; }
             </table>
         </div>
 
-        <p style="text-align:center;font-size:12px;color:#888;margin-top:16px;">
+        <p style="text-align:center;font-size:12px;color:rgba(255,255,255,0.4);margin-top:16px;">
             Dados baseados nos planos públicos de cada plataforma. Julho/2026.
         </p>
     </div>
