@@ -247,7 +247,7 @@
                 </div>
             </header>
 
-            <main class="flex-1 p-4 md:p-6 max-w-full">
+            <main class="flex-1 p-4 md:p-6 w-full max-w-[1440px] mx-auto">
                 {{ $slot }}
             </main>
         </div>

@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="max-w-5xl">
+    <div>
         <div class="mb-5">
             <h1 class="text-xl font-semibold text-gray-900">Links e Redes Sociais</h1>
             <p class="text-sm text-gray-500 mt-1">Gerencie os links que aparecem no seu cartão.</p>

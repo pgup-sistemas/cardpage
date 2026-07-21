@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="max-w-3xl space-y-6">
+    <div class="max-w-2xl space-y-6">
 
         <div>
             <h1 class="text-xl font-semibold text-gray-900">Configurações</h1>

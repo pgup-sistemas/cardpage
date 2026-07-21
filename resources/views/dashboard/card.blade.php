@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="max-w-5xl">
+    <div>
         <div class="mb-5 flex items-center justify-between">
             <div>
                 <h1 class="text-xl font-semibold text-gray-900">Meu Cartão</h1>

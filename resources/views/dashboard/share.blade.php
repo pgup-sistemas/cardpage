@@ -1,5 +1,5 @@
 <x-app-layout>
-    <div class="max-w-3xl">
+    <div class="max-w-2xl">
         <div class="mb-5">
             <h1 class="text-xl font-semibold text-gray-900">Compartilhar Perfil</h1>
             <p class="text-sm text-gray-500 mt-1">Compartilhe sua identidade digital via link ou QR Code.</p>
