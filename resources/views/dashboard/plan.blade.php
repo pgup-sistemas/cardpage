@@ -6,7 +6,7 @@
     $inTrial = $user->isOnTrial();
 @endphp
 
-<div class="max-w-lg">
+<div class="max-w-3xl">
 
     {{-- Plano atual --}}
     <div class="mx-4 mb-4 bg-[#EBEBEA] rounded-[12px] p-4">

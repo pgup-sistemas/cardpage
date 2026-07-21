@@ -1,6 +1,6 @@
 <x-app-layout>
 
-<div class="max-w-lg">
+<div class="max-w-3xl">
     <div class="mb-5">
         <h1 class="text-xl font-semibold text-gray-900">Configurar agenda</h1>
         <p class="text-sm text-gray-500 mt-1">Defina o serviço, duração dos slots e sua disponibilidade semanal.</p>
