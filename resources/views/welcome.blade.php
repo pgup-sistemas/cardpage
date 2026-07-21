@@ -1565,6 +1565,10 @@ a { text-decoration: none; }
                     </li>
                     <li>
                         <svg data-lucide="check" style="width:16px;height:16px;color:#16a34a;"></svg>
+                        Até 3 fotos na galeria
+                    </li>
+                    <li>
+                        <svg data-lucide="check" style="width:16px;height:16px;color:#16a34a;"></svg>
                         QR Code incluso
                     </li>
                     <li>
@@ -1573,11 +1577,19 @@ a { text-decoration: none; }
                     </li>
                     <li>
                         <svg data-lucide="check" style="width:16px;height:16px;color:#16a34a;"></svg>
+                        Até 3 serviços com PIX dinâmico
+                    </li>
+                    <li>
+                        <svg data-lucide="check" style="width:16px;height:16px;color:#16a34a;"></svg>
+                        Formulário de contato + caixa de mensagens
+                    </li>
+                    <li>
+                        <svg data-lucide="check" style="width:16px;height:16px;color:#16a34a;"></svg>
                         Salvar contato (vCard)
                     </li>
                     <li>
                         <svg data-lucide="x" style="width:16px;height:16px;color:#ccc;"></svg>
-                        <span style="color:#aaa;">Cores personalizadas</span>
+                        <span style="color:#aaa;">Cores de marca personalizadas</span>
                     </li>
                     <li>
                         <svg data-lucide="x" style="width:16px;height:16px;color:#ccc;"></svg>
@@ -1608,15 +1620,19 @@ a { text-decoration: none; }
                     </li>
                     <li>
                         <svg data-lucide="check" style="width:16px;height:16px;color:#16a34a;"></svg>
+                        Galeria com até <strong>30 fotos</strong>
+                    </li>
+                    <li>
+                        <svg data-lucide="check" style="width:16px;height:16px;color:#16a34a;"></svg>
+                        Serviços com PIX dinâmico <strong>ilimitados</strong>
+                    </li>
+                    <li>
+                        <svg data-lucide="check" style="width:16px;height:16px;color:#16a34a;"></svg>
                         Cores de marca personalizadas
                     </li>
                     <li>
                         <svg data-lucide="check" style="width:16px;height:16px;color:#16a34a;"></svg>
-                        Agenda de atendimentos
-                    </li>
-                    <li>
-                        <svg data-lucide="check" style="width:16px;height:16px;color:#16a34a;"></svg>
-                        Galeria com 30 fotos
+                        Agenda de atendimentos com confirmação manual
                     </li>
                     <li>
                         <svg data-lucide="check" style="width:16px;height:16px;color:#16a34a;"></svg>
