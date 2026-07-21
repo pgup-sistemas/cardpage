@@ -68,7 +68,8 @@
     /* ── Linhas de contato ── */
     .crow {
         display: flex; align-items: center; gap: 12px;
-        padding: 10px 0;
+        padding: 12px 0;
+        min-height: 44px;
         border-bottom: 1px solid var(--ui-border);
         text-decoration: none; color: var(--ui-text);
         font-size: 14px; line-height: 1.4;
@@ -117,7 +118,8 @@
     .spill {
         flex-shrink: 0;
         display: inline-flex; align-items: center; gap: 6px;
-        padding: 7px 12px 7px 10px;
+        padding: 10px 13px 10px 11px;
+        min-height: 44px;
         border-radius: 12px;
         text-decoration: none;
         transition: opacity .12s, transform .1s;
@@ -145,16 +147,26 @@
     .sd { width: 4px; height: 4px; border-radius: 50%; background: #d1d5db; transition: all .22s; }
     .sd.on { width: 14px; border-radius: 3px; background: var(--card-primary); }
 
-    /* botões de ação rápida no header */
-    .hdr-btn {
-        width: 40px; height: 40px; border-radius: 50%;
-        background: rgba(255,255,255,.15); border: none;
-        display: flex; align-items: center; justify-content: center;
-        cursor: pointer; transition: background .12s;
-        -webkit-tap-highlight-color: transparent;
-        text-decoration: none;
+    /* barra de ação principal (logo abaixo da identidade) */
+    .action-bar {
+        display: grid; grid-template-columns: 1fr 1fr;
+        gap: 8px; padding: 8px 14px 10px;
+        background: #fff;
     }
-    .hdr-btn:active { background: rgba(255,255,255,.28); }
+    .action-bar-btn {
+        display: flex; align-items: center; justify-content: center; gap: 7px;
+        height: 46px; border-radius: 12px;
+        font-size: 13px; font-weight: 600; cursor: pointer;
+        text-decoration: none; border: none;
+        transition: opacity .15s, transform .12s;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .action-bar-btn:active { transform: scale(.97); opacity: .85; }
+    .action-bar-primary { background-color: var(--card-button); color: #fff; }
+    .action-bar-secondary {
+        background: #f4f4f3; color: var(--ui-text);
+        border: 1px solid var(--ui-border);
+    }
 </style>
 @endsection
 
@@ -193,16 +205,6 @@
         @endif
         <div style="position:absolute;inset:0;background:linear-gradient(to bottom,rgba(0,0,0,0.03) 0%,rgba(0,0,0,0.22) 100%);"></div>
 
-        {{-- Botões flutuantes na capa --}}
-        <div style="position:absolute;bottom:12px;right:12px;display:flex;gap:7px;">
-            <a href="{{ route('card.vcard', $card->slug) }}"
-               class="hdr-btn" title="Salvar contato">
-                <i data-lucide="contact" style="width:18px;height:18px;color:rgba(255,255,255,.9);"></i>
-            </a>
-            <button type="button" onclick="nexosnShare()" class="hdr-btn" title="Compartilhar">
-                <i data-lucide="share-2" style="width:18px;height:18px;color:rgba(255,255,255,.9);"></i>
-            </button>
-        </div>
     </div>
 
     {{-- Identidade — avatar esquerda + nome direita --}}
@@ -256,34 +258,19 @@
         </div>
     </div>
 
-    {{-- Divisor --}}
-    <div style="height:1px;background:rgba(0,0,0,0.06);margin:0 16px;"></div>
-
-    {{-- Social scroll --}}
-    @if ($socialLinks->isNotEmpty())
-    <div style="background:#fff;padding:12px 16px 10px;">
-        <p style="font-size:9.5px;font-weight:600;color:#c4c9d4;letter-spacing:.9px;text-transform:uppercase;margin:0 0 9px;">
-            Redes sociais
-        </p>
-        <div class="social-track" id="nexosn-social-track">
-            @foreach ($socialLinks as $link)
-            <a href="{{ $link->url }}" target="_blank" rel="noopener"
-               class="spill {{ $socialPillClass(strtolower($link->url)) }}">
-                <i data-lucide="{{ $link->lucide_icon }}" style="width:15px;height:15px;color:rgba(255,255,255,.88);flex-shrink:0;"></i>
-                <span class="spill-label">{{ $link->label }}</span>
-            </a>
-            @endforeach
-        </div>
-        @if ($socialLinks->count() > 3)
-        <div class="scroll-dots" id="nexosn-scroll-dots">
-            <div class="sd on"></div>
-            <div class="sd"></div>
-            <div class="sd"></div>
-        </div>
-        @endif
+    {{-- Barra de ação principal --}}
+    <div class="action-bar">
+        <button type="button" onclick="nexosnDownloadVCard()" class="action-bar-btn action-bar-primary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;opacity:.9;"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><line x1="19" y1="8" x2="19" y2="14"/><line x1="22" y1="11" x2="16" y2="11"/></svg>
+            Salvar contato
+        </button>
+        <button type="button" onclick="nexosnShareNative()" class="action-bar-btn action-bar-secondary">
+            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;opacity:.7;"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+            Compartilhar
+        </button>
     </div>
-    <div style="height:1px;background:rgba(0,0,0,0.06);margin:0 16px;"></div>
-    @endif
+
+    <div style="height:1px;background:rgba(0,0,0,0.06);margin:0 14px;"></div>
 
 </header>
 
@@ -297,6 +284,32 @@
         </a>
     @endforeach
 </div>
+@endif
+
+{{-- ═══════════════════ REDES SOCIAIS ═══════════════════ --}}
+@if ($socialLinks->isNotEmpty())
+<div style="background:#fff;padding:10px 14px 10px;margin-top:4px;">
+    <p style="font-size:9.5px;font-weight:600;color:#c4c9d4;letter-spacing:.9px;text-transform:uppercase;margin:0 0 9px;">
+        Redes sociais
+    </p>
+    <div class="social-track" id="nexosn-social-track">
+        @foreach ($socialLinks as $link)
+        <a href="{{ $link->url }}" target="_blank" rel="noopener"
+           class="spill {{ $socialPillClass(strtolower($link->url)) }}">
+            <i data-lucide="{{ $link->lucide_icon }}" style="width:15px;height:15px;color:rgba(255,255,255,.88);flex-shrink:0;"></i>
+            <span class="spill-label">{{ $link->label }}</span>
+        </a>
+        @endforeach
+    </div>
+    @if ($socialLinks->count() > 3)
+    <div class="scroll-dots" id="nexosn-scroll-dots">
+        <div class="sd on"></div>
+        <div class="sd"></div>
+        <div class="sd"></div>
+    </div>
+    @endif
+</div>
+<div style="height:1px;background:rgba(0,0,0,0.06);margin:0 14px;"></div>
 @endif
 
 <script>
@@ -440,16 +453,16 @@ function nexosnShare() {
         <div style="display:flex;gap:7px;">
             <a href="{{ $mapsUrl }}" target="_blank" rel="noopener"
                style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;
-                      padding:9px 12px;border-radius:9px;font-size:12px;font-weight:600;
+                      padding:12px;min-height:44px;border-radius:10px;font-size:12px;font-weight:600;
                       border:1px solid var(--ui-border);background:#fff;color:#4b5563;text-decoration:none;">
-                <i data-lucide="map" style="width:13px;height:13px;color:var(--ui-icon);"></i>
+                <i data-lucide="map" style="width:14px;height:14px;color:var(--ui-icon);"></i>
                 Google Maps
             </a>
             <button type="button" onclick="compartilharLocalizacao()"
                     style="flex:1;display:flex;align-items:center;justify-content:center;gap:5px;
-                           padding:9px 12px;border-radius:9px;font-size:12px;font-weight:600;
+                           padding:12px;min-height:44px;border-radius:10px;font-size:12px;font-weight:600;
                            border:1px solid var(--ui-border);background:#fff;color:#4b5563;cursor:pointer;">
-                <i data-lucide="share-2" style="width:13px;height:13px;color:var(--ui-icon);"></i>
+                <i data-lucide="share-2" style="width:14px;height:14px;color:var(--ui-icon);"></i>
                 Compartilhar
             </button>
         </div>
@@ -542,8 +555,8 @@ function copiarPix() {
                 padding:14px 16px;background:linear-gradient(to bottom,rgba(0,0,0,.6),transparent);z-index:2;">
         <span id="lb-counter" style="font-size:12px;color:rgba(255,255,255,.6);font-weight:500;"></span>
         <button onclick="nexosnGallery.close()"
-                style="background:rgba(255,255,255,.12);border:none;color:#fff;width:34px;height:34px;
-                       border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;">×</button>
+                style="background:rgba(255,255,255,.12);border:none;color:#fff;width:44px;height:44px;
+                       border-radius:50%;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:20px;">×</button>
     </div>
 
     {{-- Imagem --}}
@@ -560,15 +573,15 @@ function copiarPix() {
     <button onclick="nexosnGallery.prev()"
             style="position:absolute;left:8px;top:50%;transform:translateY(-50%);
                    background:rgba(255,255,255,.12);border:none;color:#fff;
-                   width:40px;height:40px;border-radius:50%;display:flex;align-items:center;
-                   justify-content:center;cursor:pointer;font-size:20px;backdrop-filter:blur(4px);">‹</button>
+                   width:48px;height:48px;border-radius:50%;display:flex;align-items:center;
+                   justify-content:center;cursor:pointer;font-size:22px;backdrop-filter:blur(4px);">‹</button>
 
     {{-- Next --}}
     <button onclick="nexosnGallery.next()"
             style="position:absolute;right:8px;top:50%;transform:translateY(-50%);
                    background:rgba(255,255,255,.12);border:none;color:#fff;
-                   width:40px;height:40px;border-radius:50%;display:flex;align-items:center;
-                   justify-content:center;cursor:pointer;font-size:20px;backdrop-filter:blur(4px);">›</button>
+                   width:48px;height:48px;border-radius:50%;display:flex;align-items:center;
+                   justify-content:center;cursor:pointer;font-size:22px;backdrop-filter:blur(4px);">›</button>
 
     {{-- Dots --}}
     <div id="lb-dots" style="display:flex;gap:6px;padding-bottom:20px;"></div>
@@ -674,12 +687,7 @@ function copiarPix() {
     "slug":  "{{ $card->slug }}"
 }
 </script>
-<button type="button" onclick="nexosnDownloadVCard()" class="abtn abtn-ghost" style="border-radius:16px;">
-    <i data-lucide="user-plus" style="width:16px;height:16px;color:var(--ui-icon);"></i>
-    Salvar contato
-</button>
-
-{{-- ── COMPARTILHAR / QR CODE (seção colapsável, offline-safe) ── --}}
+{{-- ── QR CODE / COMPARTILHAR (seção colapsável, offline-safe) ── --}}
 <div class="cs" x-data="{ open: false }">
     <button class="cs-head" type="button" @click="open = !open">
         <div class="cs-label">
@@ -715,14 +723,14 @@ function copiarPix() {
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;">
             <button type="button" onclick="nexosnCopyLink(this)"
                     style="display:flex;align-items:center;justify-content:center;gap:6px;
-                           padding:11px 12px;border-radius:10px;font-size:12px;font-weight:600;
+                           padding:12px;min-height:44px;border-radius:10px;font-size:12px;font-weight:600;
                            border:1px solid var(--ui-border);background:#fff;color:#374151;cursor:pointer;">
                 <i data-lucide="copy" style="width:13px;height:13px;color:var(--ui-icon);"></i>
                 <span>Copiar link</span>
             </button>
             <button type="button" onclick="nexosnShareNative()"
                     style="display:flex;align-items:center;justify-content:center;gap:6px;
-                           padding:11px 12px;border-radius:10px;font-size:12px;font-weight:600;
+                           padding:12px;min-height:44px;border-radius:10px;font-size:12px;font-weight:600;
                            border:1px solid var(--ui-border);background:#fff;color:#374151;cursor:pointer;">
                 <i data-lucide="share-2" style="width:13px;height:13px;color:var(--ui-icon);"></i>
                 <span>Compartilhar</span>
