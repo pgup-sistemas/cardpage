@@ -200,6 +200,82 @@
         flex-shrink: 0;
     }
     .clink span { flex: 1; }
+
+    /* ── Serviços (M-11) ── */
+    .svc-item {
+        display: flex; align-items: center; gap: 12px;
+        padding: 12px 0; min-height: 56px;
+        border-bottom: 1px solid var(--ui-border);
+        cursor: pointer;
+        -webkit-tap-highlight-color: transparent;
+    }
+    .svc-item:last-child { border-bottom: none; }
+    .svc-item:active { opacity: .75; }
+    .svc-icon {
+        width: 38px; height: 38px; border-radius: 10px;
+        background-color: var(--card-button);
+        display: flex; align-items: center; justify-content: center; flex-shrink: 0;
+    }
+    .svc-info { flex: 1; min-width: 0; }
+    .svc-name { font-size: 13.5px; font-weight: 600; color: var(--ui-heading); line-height: 1.3; }
+    .svc-desc { font-size: 12px; color: var(--ui-label); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .svc-price {
+        font-size: 14px; font-weight: 700; color: var(--card-button);
+        white-space: nowrap; flex-shrink: 0;
+    }
+
+    /* ── Modal PIX ── */
+    .pix-modal-overlay {
+        display: none; position: fixed; inset: 0; z-index: 9998;
+        background: rgba(0,0,0,0.55); backdrop-filter: blur(3px);
+        -webkit-backdrop-filter: blur(3px);
+    }
+    .pix-modal-sheet {
+        position: fixed; left: 0; right: 0; bottom: 0; z-index: 9999;
+        background: #fff; border-radius: 24px 24px 0 0;
+        padding: 20px 20px 36px; max-width: 480px; margin: 0 auto;
+        transform: translateY(100%);
+        transition: transform .32s cubic-bezier(.32,1,.24,1);
+        max-height: 92vh; overflow-y: auto;
+    }
+    .pix-modal-sheet.open { transform: translateY(0); }
+    .pix-modal-handle {
+        width: 36px; height: 4px; border-radius: 99px; background: #e5e7eb;
+        margin: 0 auto 18px;
+    }
+    .pix-modal-title { font-size: 16px; font-weight: 700; color: var(--ui-heading); text-align: center; margin-bottom: 4px; }
+    .pix-modal-price {
+        font-size: 28px; font-weight: 800; color: var(--card-button);
+        text-align: center; letter-spacing: -.5px; margin: 6px 0 18px;
+    }
+    .pix-qr-wrap { display: flex; justify-content: center; margin-bottom: 16px; }
+    .pix-qr-wrap svg { max-width: 220px; border-radius: 12px; }
+    .pix-payload-box {
+        background: var(--ui-bg); border: 1px solid var(--ui-border); border-radius: 12px;
+        padding: 11px 14px; display: flex; align-items: center; gap: 8px; margin-bottom: 14px;
+    }
+    .pix-payload-text {
+        flex: 1; font-size: 11px; color: #6b7280; word-break: break-all;
+        overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+    }
+    .pix-copy-btn {
+        display: flex; align-items: center; justify-content: center; gap: 7px;
+        width: 100%; padding: 14px; border-radius: 14px;
+        background: linear-gradient(100deg, #F77F00 0%, #FCBF49 100%);
+        color: #431900; font-size: 14px; font-weight: 700;
+        border: none; cursor: pointer; transition: opacity .15s;
+    }
+    .pix-copy-btn:active { opacity: .85; }
+    .pix-feedback {
+        text-align: center; font-size: 12px; color: #16a34a;
+        font-weight: 600; margin-top: 8px; min-height: 18px;
+    }
+    .pix-spinner {
+        width: 36px; height: 36px; border: 3px solid rgba(0,0,0,0.1);
+        border-top-color: var(--card-button); border-radius: 50%;
+        animation: pix-spin .7s linear infinite; margin: 40px auto;
+    }
+    @keyframes pix-spin { to { transform: rotate(360deg); } }
 </style>
 @endsection
 
@@ -553,6 +629,131 @@ function copiarPix() {
 }
 </script>
 @endif
+
+{{-- ── SERVIÇOS + PIX ── --}}
+@php $activeServices = $card->services->where('is_active', true); @endphp
+@if ($activeServices->isNotEmpty() && $card->pix_key)
+<div class="cs" x-data="{ open: true }">
+    <button class="cs-head" type="button" @click="open = !open">
+        <div class="cs-label">
+            <i data-lucide="receipt" style="width:13px;height:13px;color:var(--ui-icon);"></i>
+            Serviços
+        </div>
+        <i data-lucide="chevron-down" class="cs-chevron"
+           :style="open ? 'transform:rotate(180deg)' : ''"></i>
+    </button>
+    <div class="cs-body" x-show="open"
+         x-transition:enter="transition ease-out duration-180"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-120"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0">
+        @foreach ($activeServices as $service)
+        <button type="button" class="svc-item w-full text-left"
+                onclick="pixModal.open({{ $service->id }})">
+            <div class="svc-icon">
+                <svg data-lucide="{{ $service->lucide_icon }}" width="18" height="18" stroke="#fff" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"></svg>
+            </div>
+            <div class="svc-info">
+                <div class="svc-name">{{ $service->name }}</div>
+                @if ($service->description)
+                <div class="svc-desc">{{ $service->description }}</div>
+                @endif
+            </div>
+            <span class="svc-price">{{ $service->formatted_price }}</span>
+            <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#d1d5db" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+        @endforeach
+    </div>
+</div>
+@endif
+
+{{-- MODAL PIX --}}
+<div id="pix-modal-overlay" class="pix-modal-overlay" onclick="pixModal.close()"></div>
+<div id="pix-modal-sheet" class="pix-modal-sheet" role="dialog" aria-modal="true">
+    <div class="pix-modal-handle"></div>
+    <div id="pix-modal-body">
+        <div class="pix-spinner" id="pix-spinner"></div>
+    </div>
+</div>
+
+<script>
+(function () {
+    const slug    = '{{ $card->slug }}';
+    const overlay = document.getElementById('pix-modal-overlay');
+    const sheet   = document.getElementById('pix-modal-sheet');
+    const body    = document.getElementById('pix-modal-body');
+    @if (!empty($autoOpenService))
+    let _autoOpen = {{ $autoOpenService }};
+    @else
+    let _autoOpen = null;
+    @endif
+
+    window.pixModal = {
+        open(serviceId) {
+            body.innerHTML = '<div class="pix-spinner"></div>';
+            overlay.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            requestAnimationFrame(() => sheet.classList.add('open'));
+
+            fetch(`/u/${slug}/servico/${serviceId}/payload`)
+                .then(r => r.json())
+                .then(data => {
+                    body.innerHTML = `
+                        <p class="pix-modal-title">${data.name}</p>
+                        <p class="pix-modal-price">${data.formatted}</p>
+                        <div class="pix-qr-wrap">${data.qr_svg}</div>
+                        <p style="font-size:11px;color:#9ca3af;text-align:center;margin-bottom:12px;">
+                            Abra o app do seu banco e escaneie o QR Code ou copie o código abaixo.
+                        </p>
+                        <div class="pix-payload-box">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#9ca3af" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            <span class="pix-payload-text" id="pix-payload-val">${data.payload}</span>
+                        </div>
+                        <button class="pix-copy-btn" onclick="pixModal.copy('${data.payload}')">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#431900" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                            Pix copia e cola
+                        </button>
+                        <p class="pix-feedback" id="pix-fb"></p>
+                        <button onclick="pixModal.close()" style="display:block;width:100%;margin-top:10px;padding:12px;
+                                border:none;background:#f3f4f6;border-radius:14px;font-size:13px;font-weight:600;
+                                color:#6b7280;cursor:pointer;">Fechar</button>
+                    `;
+                })
+                .catch(() => {
+                    body.innerHTML = '<p style="text-align:center;font-size:13px;color:#ef4444;padding:24px 0;">Erro ao carregar. Tente novamente.</p>';
+                });
+        },
+
+        copy(payload) {
+            navigator.clipboard.writeText(payload).then(() => {
+                const fb = document.getElementById('pix-fb');
+                if (fb) { fb.textContent = '✓ Código copiado! Cole no seu banco.'; }
+            });
+        },
+
+        close() {
+            sheet.classList.remove('open');
+            overlay.style.display = 'none';
+            document.body.style.overflow = '';
+        },
+    };
+
+    // Auto-open via link direto
+    if (_autoOpen) {
+        window.addEventListener('load', () => pixModal.open(_autoOpen));
+    }
+
+    // Swipe down para fechar
+    let touchY = null;
+    sheet.addEventListener('touchstart', e => { touchY = e.touches[0].clientY; }, { passive: true });
+    sheet.addEventListener('touchend', e => {
+        if (touchY !== null && (e.changedTouches[0].clientY - touchY) > 60) pixModal.close();
+        touchY = null;
+    }, { passive: true });
+})();
+</script>
 
 {{-- ── GALERIA com Lightbox/Slideshow ── --}}
 @if ($card->photos->isNotEmpty())

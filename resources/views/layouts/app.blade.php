@@ -62,6 +62,7 @@
                 <x-sidebar-link href="{{ route('dashboard.messages') }}" :active="request()->routeIs('dashboard.messages')" icon="mail" label="Mensagens" :badge="$unreadMessages ?: null" />
                 <x-sidebar-link href="{{ route('dashboard.schedule') }}" :active="request()->routeIs('dashboard.schedule')" icon="calendar" label="Agenda" />
                 <x-sidebar-link href="{{ route('dashboard.appointments') }}" :active="request()->routeIs('dashboard.appointments')" icon="clock" label="Agendamentos" />
+                <x-sidebar-link href="{{ route('dashboard.services') }}" :active="request()->routeIs('dashboard.services')" icon="receipt" label="Serviços / PIX" />
                 <x-sidebar-link href="{{ route('dashboard.share') }}" :active="request()->routeIs('dashboard.share')" icon="share-2" label="Compartilhar" />
                 <x-sidebar-link href="{{ route('dashboard.plan') }}" :active="request()->routeIs('dashboard.plan')" icon="zap" label="Plano" />
                 <x-sidebar-link href="{{ route('dashboard.settings') }}" :active="request()->routeIs('dashboard.settings')" icon="settings" label="Configurações" />

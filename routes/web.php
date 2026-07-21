@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AppointmentController;
 use App\Http\Controllers\CardController;
+use App\Http\Controllers\ServicePixController;
 use App\Http\Controllers\Dashboard\CheckoutController;
 use App\Http\Controllers\Dashboard\SettingsController;
 use App\Http\Controllers\EfiBankWebhookController;
@@ -28,6 +29,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::view('schedule', 'dashboard.schedule')->name('schedule');
         Route::view('appointments', 'dashboard.appointments')->name('appointments');
         Route::view('plan', 'dashboard.plan')->name('plan');
+        Route::view('services', 'dashboard.services')->name('services');
         Route::get('share', [App\Http\Controllers\Dashboard\ShareController::class, 'index'])->name('share');
         Route::get('settings', [SettingsController::class, 'index'])->name('settings');
         Route::delete('settings/account', [SettingsController::class, 'destroyAccount'])->name('settings.account.destroy');
@@ -63,5 +65,7 @@ Route::get('/u/{slug}/qr.svg', [CardController::class, 'qrSvg'])->name('card.qr.
 Route::get('/u/{slug}/qr.png', [CardController::class, 'qrPng'])->name('card.qr.png');
 Route::get('/u/{slug}/agendar/slots', [AppointmentController::class, 'slots'])->name('card.slots');
 Route::get('/u/{slug}/link/{linkId}', [CardController::class, 'trackClick'])->name('card.link.click');
+Route::get('/u/{card:slug}/servico/{service}/payload', [ServicePixController::class, 'payload'])->name('card.service.payload');
+Route::get('/u/{slug}/pagar/{service}', [ServicePixController::class, 'show'])->name('card.service.pay');
 
 require __DIR__.'/auth.php';

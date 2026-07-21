@@ -12,7 +12,7 @@ class CardController extends Controller
 {
     public function show(string $slug, QrCodeService $qrService)
     {
-        $card = Card::with(['user', 'links' => fn ($q) => $q->where('is_active', true), 'photos', 'schedule.slots'])
+        $card = Card::with(['user', 'links' => fn ($q) => $q->where('is_active', true), 'photos', 'schedule.slots', 'services' => fn ($q) => $q->where('is_active', true)])
             ->where('slug', $slug)
             ->where('is_active', true)
             ->firstOrFail();

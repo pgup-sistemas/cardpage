@@ -48,6 +48,11 @@ class Card extends Model
         return $this->hasMany(ContactMessage::class)->orderByDesc('created_at');
     }
 
+    public function services(): HasMany
+    {
+        return $this->hasMany(CardService::class)->orderBy('sort_order');
+    }
+
     public function schedule(): HasOne
     {
         return $this->hasOne(CardSchedule::class);
