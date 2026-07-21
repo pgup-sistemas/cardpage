@@ -672,6 +672,29 @@ a { text-decoration: none; }
     background: linear-gradient(90deg,#F77F00,#FCBF49); color: #003049; font-size: 10px; font-weight: 800;
     padding: 6px 0; border-radius: 8px; display: flex; align-items: center; justify-content: center; gap: 4px;
 }
+/* ---- COMPARATIVO (fundo destacado) ---- */
+.section-comparativo {
+    background: linear-gradient(180deg, #F4F3F0 0%, #E9ECEF 100%);
+    position: relative;
+    overflow: hidden;
+}
+.section-comparativo::before {
+    content: '';
+    position: absolute; inset: 0;
+    background-image: radial-gradient(circle at 1px 1px, rgba(0,48,73,0.08) 1px, transparent 0);
+    background-size: 26px 26px;
+    -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 0%, transparent 75%);
+            mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, #000 0%, transparent 75%);
+    pointer-events: none;
+}
+.section-comparativo::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse 50% 40% at 50% 100%, rgba(252,191,73,0.10) 0%, transparent 70%);
+    pointer-events: none;
+}
+.section-comparativo .container { position: relative; }
+
 .svcshow-badge {
     display: inline-flex; align-items: center; gap: 6px;
     background: rgba(252,191,73,0.15); color: #995f00; font-size: 10px; font-weight: 800;
@@ -1770,7 +1793,7 @@ a { text-decoration: none; }
 </section>
 
 <!-- ═══ COMPARATIVO ═══ -->
-<section class="section section-alt" id="comparativo">
+<section class="section section-comparativo" id="comparativo">
     <div class="container">
         <div class="section-header" style="text-align:center;">
             <div class="section-tag">Por que NEXOSN?</div>
@@ -1779,8 +1802,8 @@ a { text-decoration: none; }
         </div>
 
         <style>
-        .cmp-wrap { overflow-x: auto; border-radius: 16px; border: 1px solid #E0E0DE; }
-        .cmp-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 600px; }
+        .cmp-wrap { overflow-x: auto; border-radius: 16px; border: 1px solid #E0E0DE; background: #fff; box-shadow: 0 20px 50px rgba(0,48,73,0.08); }
+        .cmp-table { width: 100%; border-collapse: collapse; font-size: 13px; min-width: 600px; background: #fff; }
         .cmp-table thead th {
             padding: 12px 14px; text-align: center; font-size: 11px; font-weight: 700;
             letter-spacing: .04em; background: #fff; border-bottom: 1px solid #E0E0DE;
