@@ -96,6 +96,18 @@ Estas decisões não devem ser revertidas sem revisão formal do documento.
 - Usuários Free exibem adicionalmente o texto "Criado com NEXOSN" acima do logo
 - Logo renderizado inline como SVG — sem dependência externa, sem carregamento assíncrono
 
+### 2.15 Serviços e PIX Dinâmico (M-11)
+
+- O titular cadastra serviços com preço no painel → o cartão público exibe seção "Serviços"
+- Ao tocar em um serviço, um bottom-sheet modal exibe QR Code PIX + campo "Pix copia e cola"
+- **Não há integração bancária:** o QR é gerado no padrão **EMV BR Code** (Banco Central) usando apenas a chave PIX já cadastrada pelo titular — funciona em qualquer app bancário (Nubank, Itaú, Bradesco, Caixa, BB, etc.)
+- O Efi Bank **permanece exclusivamente para billing do SaaS** — não entra neste fluxo
+- Payload gerado **sempre no servidor** (`QrCodeService::pixPayload()`) — nunca no cliente
+- CRC16-CCITT-FALSE obrigatório conforme especificação BCB Resolução nº 1/2020
+- Nome do recebedor convertido para ASCII puro antes de gerar o payload (limitação do padrão PIX)
+- Link direto `/u/{slug}/pagar/{service}` reutiliza `card.show` com variável `$autoOpenService` — abre modal automaticamente sem criar nova view
+- **Free:** até 3 serviços · **Pro:** até 20 serviços
+
 ### 2.10 Cores de marca pelo usuário
 - **2 pickers independentes:** cor primária (header, fundo) + cor de botão (CTAs)
 - Feature exclusiva do plano **Pro**

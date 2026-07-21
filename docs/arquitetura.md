@@ -167,6 +167,25 @@ Schema::create('card_links', function (Blueprint $table) {
 });
 ```
 
+### card_services
+```php
+// migration: 0011_create_card_services_table.php
+Schema::create('card_services', function (Blueprint $table) {
+    $table->id();
+    $table->foreignId('card_id')->constrained()->cascadeOnDelete();
+    $table->string('name', 60);
+    $table->string('description', 160)->nullable();
+    $table->decimal('price', 10, 2);
+    $table->string('lucide_icon', 40)->default('tag');
+    $table->unsignedSmallInteger('sort_order')->default(0);
+    $table->boolean('is_active')->default(true);
+    $table->timestamps();
+
+    $table->index(['card_id', 'sort_order']);
+    $table->index(['card_id', 'is_active']);
+});
+```
+
 ### card_appointments
 ```php
 Schema::create('card_appointments', function (Blueprint $table) {
@@ -229,6 +248,7 @@ class Card extends Model
     public function user(): BelongsTo { return $this->belongsTo(User::class); }
     public function links(): HasMany { return $this->hasMany(CardLink::class)->orderBy('sort_order'); }
     public function photos(): HasMany { return $this->hasMany(CardPhoto::class)->orderBy('sort_order'); }
+    public function services(): HasMany { return $this->hasMany(CardService::class)->orderBy('sort_order'); }
     public function schedule(): HasOne { return $this->hasOne(CardSchedule::class); }
     public function appointments(): HasMany { return $this->hasMany(CardAppointment::class); }
     public function messages(): HasMany { return $this->hasMany(ContactMessage::class); }
@@ -271,6 +291,28 @@ public function confirm(CardAppointment $appointment): void
 
 // Recusa e libera slot
 public function refuse(CardAppointment $appointment): void
+```
+
+### QrCodeService — métodos PIX (M-11)
+```php
+// Gera payload PIX EMV BR Code (padrão Banco Central) com valor preenchido
+// Não requer integração bancária — funciona com qualquer chave PIX
+public function pixPayload(
+    string $pixKey,
+    float  $amount,
+    string $merchantName,
+    string $city   = 'Brasil',
+    string $txid   = '***'
+): string
+
+// Formata campo EMV: "{id}{len:02d}{value}"
+private function emvField(string $id, string $value): string
+
+// CRC16-CCITT-FALSE: poly=0x1021, init=0xFFFF — obrigatório no padrão PIX
+private function crc16(string $payload): string
+
+// Remove acentos e caracteres não-ASCII (PIX aceita apenas ASCII básico)
+private function toAscii(string $text): string
 ```
 
 ### ImageService
@@ -362,12 +404,18 @@ Route::middleware(['auth', 'plan:agenda'])->group(function () {
 Route::get('/u/{slug}', [CardController::class, 'show'])->name('card.show');
 Route::post('/u/{slug}/contact', [ContactController::class, 'store'])->name('card.contact');
 Route::get('/u/{slug}/vcf', [CardController::class, 'downloadVcf'])->name('card.vcf');
-Route::get('/u/{slug}/link/{linkId}', [CardController::class, 'trackClick'])->name('card.link.click'); // tracking clicks
+Route::get('/u/{slug}/link/{linkId}', [CardController::class, 'trackClick'])->name('card.link.click');
 Route::get('/u/{slug}/agendar', [AppointmentController::class, 'create'])->name('card.schedule');
 Route::post('/u/{slug}/agendar', [AppointmentController::class, 'store'])->name('card.schedule.store');
 Route::get('/u/{slug}/agendar/slots', [AppointmentController::class, 'slots'])->name('card.schedule.slots');
 Route::get('/appointments/{token}/confirm', [AppointmentController::class, 'confirm'])->name('appointments.confirm');
 Route::get('/appointments/{token}/refuse', [AppointmentController::class, 'refuse'])->name('appointments.refuse');
+
+// M-11 Serviços + PIX Dinâmico
+Route::get('/u/{card:slug}/servico/{service}/payload', [ServicePixController::class, 'payload'])
+    ->name('card.service.payload');  // retorna JSON: payload, qr_svg, formatted, name
+Route::get('/u/{card:slug}/pagar/{service}', [ServicePixController::class, 'show'])
+    ->name('card.service.pay');      // link direto — abre modal automaticamente
 
 // Painel — autenticado
 Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')->group(function () {

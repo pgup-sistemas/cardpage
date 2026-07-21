@@ -210,6 +210,7 @@ Todas as skills agora têm conteúdo completo (não são mais stubs).
 | M-08 Billing + Efi Bank | `.claude/skills/billing.md` | ✅ Completa |
 | M-09 Admin Filament | `.claude/skills/admin.md` | ✅ Completa |
 | M-10 Agenda + Agendamentos | `.claude/skills/agenda.md` | ✅ Completa |
+| M-11 Serviços + PIX Dinâmico | `.claude/skills/services-pix.md` | ✅ Completa |
 
 ---
 

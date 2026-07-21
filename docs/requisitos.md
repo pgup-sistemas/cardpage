@@ -1,6 +1,7 @@
 # Card — Documento de Requisitos v1.2
 > Cartão Digital SaaS · PageUp Sistemas · Porto Velho, RO
 > Data: 2026-07-09 · Atualizado: 2026-07-20 · Status: APROVADO PARA IMPLEMENTAÇÃO
+> v1.3: M-11 Serviços + PIX Dinâmico adicionado em 2026-07-20
 
 ---
 
@@ -219,6 +220,42 @@
 - Confirmação automática sem aprovação manual
 - Integração com Google Calendar (link "Adicionar ao calendário" no e-mail)
 - Cancelamento pelo visitante via link no e-mail de confirmação
+
+---
+
+### M-11 · Cardápio de Serviços + PIX Dinâmico
+
+#### Configuração pelo titular (painel)
+
+| ID | Requisito | Plano |
+|---|---|---|
+| SV-01 | Cadastrar serviços com nome (60 chars), descrição opcional (160 chars), preço e ícone Lucide | Free: até 3 · Pro: até 20 |
+| SV-02 | Reordenar serviços por drag-and-drop | Free/Pro |
+| SV-03 | Ativar/desativar serviço individualmente sem excluir | Free/Pro |
+| SV-04 | Aviso no painel quando `pix_key` não está cadastrada (serviços não aparecem no cartão) | Free/Pro |
+
+#### Experiência do visitante (cartão público)
+
+| ID | Requisito | Plano |
+|---|---|---|
+| SV-05 | Seção "Serviços" visível no cartão quando há ao menos um serviço ativo e chave PIX cadastrada | Free/Pro |
+| SV-06 | Cada item exibe: ícone colorido, nome do serviço, descrição e preço formatado (R$ 0,00) | Free/Pro |
+| SV-07 | Ao tocar no serviço, abre bottom-sheet modal com QR Code PIX já com valor preenchido | Free/Pro |
+| SV-08 | Modal exibe: nome do serviço, valor, QR Code SVG, campo "Pix copia e cola" + botão copiar | Free/Pro |
+| SV-09 | Copiar código PIX: copia o payload EMV para clipboard + feedback visual "Código copiado!" | Free/Pro |
+| SV-10 | Link direto de pagamento: `/u/{slug}/pagar/{service}` abre cartão com modal já expandido | Free/Pro |
+| SV-11 | Payload PIX gerado no padrão EMV BR Code (Banco Central) — funciona em qualquer app bancário | Free/Pro |
+
+#### Padrão técnico PIX EMV
+
+| ID | Requisito |
+|---|---|
+| SV-12 | Payload gerado pelo servidor via `QrCodeService::pixPayload()` — nunca no cliente |
+| SV-13 | CRC16-CCITT-FALSE calculado corretamente (poly 0x1021, init 0xFFFF) |
+| SV-14 | Nome do recebedor e cidade convertidos para ASCII puro (PIX não aceita acentos) |
+| SV-15 | TxID gerado como `SRV{service_id}` para rastreabilidade básica |
+| SV-16 | Rota `/u/{slug}/servico/{service}/payload` retorna JSON: payload, qr_svg, formatted, name |
+| SV-17 | Serviços não exigem conta bancária integrada — apenas a chave PIX do titular |
 
 ---
 
