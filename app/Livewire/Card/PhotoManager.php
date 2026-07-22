@@ -42,12 +42,14 @@ class PhotoManager extends Component
         ]);
 
         $path = $imageService->storePhoto($this->newPhoto, $user->id);
+        $thumbnailPath = $imageService->storeThumbnail($this->newPhoto, $user->id);
 
         $maxOrder = $this->card->photos()->max('order') ?? 0;
         $this->card->photos()->create([
-            'path'    => $path,
-            'caption' => $this->newCaption ?: null,
-            'order'   => $maxOrder + 1,
+            'path'           => $path,
+            'thumbnail_path' => $thumbnailPath,
+            'caption'        => $this->newCaption ?: null,
+            'order'          => $maxOrder + 1,
         ]);
 
         $this->reset(['newPhoto', 'newCaption']);

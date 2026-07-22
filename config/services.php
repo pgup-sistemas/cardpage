@@ -35,4 +35,13 @@ return [
         ],
     ],
 
+    'efibank' => [
+        'client_id'          => env('EFI_CLIENT_ID'),
+        'client_secret'      => env('EFI_CLIENT_SECRET'),
+        'certificate'        => env('EFI_CERTIFICATE_PATH'),
+        'certificate_pwd'    => env('EFI_CERTIFICATE_PASSWORD', ''),
+        'plan_id_monthly'    => env('EFI_PLAN_ID_MONTHLY'),
+        'plan_id_annual'     => env('EFI_PLAN_ID_ANNUAL'),
+    ],
+
 ];

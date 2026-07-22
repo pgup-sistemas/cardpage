@@ -90,6 +90,27 @@ class ImageService
         return $this->saveJpeg($image, $userId, $folder);
     }
 
+    /**
+     * Miniatura quadrada (300×300, crop centralizado) para grids da galeria e admin.
+     */
+    public function storeThumbnail(UploadedFile $file, int $userId, string $folder = 'photos'): string
+    {
+        $image = $this->manager->read($file->getRealPath());
+
+        $image->orient();
+
+        $w = $image->width();
+        $h = $image->height();
+        $side = min($w, $h);
+        $x = (int) (($w - $side) / 2);
+        $y = (int) (($h - $side) / 2);
+
+        $image->crop($side, $side, $x, $y)
+              ->resize(300, 300);
+
+        return $this->saveJpeg($image, $userId, "{$folder}/thumbs");
+    }
+
     public function delete(string $path): void
     {
         Storage::disk('public')->delete($path);
